@@ -1,4 +1,4 @@
-package cts
+package gocite
 
 import (
 	"strings"
