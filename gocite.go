@@ -27,7 +27,7 @@ type Workgroup struct {
 // SplitCTS splits a CTS URN in its stem and the passage reference
 func SplitCTS(s string) URN {
 	var result URN
-	result = URN{Stem: strings.Join(strings.Split(s, ":")[0:4], ":"), Reference: strings.Split(s, ":")[4]}
+	result = URN{Stem: strings.Join(strings.Split(s, ":")[0:4], ":") + ":", Reference: strings.Split(s, ":")[4]}
 	return result
 }
 
