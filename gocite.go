@@ -138,3 +138,58 @@ func IsExemplarID(s string) bool {
 	}
 	return true
 }
+
+// GetPassageByID searches for an ID in a given work
+func GetPassageByID(id string, w Work) Passage {
+	for i := range w.Passages {
+		if w.Passages[i].PassageID == id {
+			return w.Passages[i]
+		}
+	}
+	return Passage{}
+}
+
+// GetIndexByID searches for an ID in a given work and returns its Index
+func GetIndexByID(id string, w Work) *int {
+	for i := range w.Passages {
+		if w.Passages[i].PassageID == id {
+			return CreateIndex(i)
+		}
+	}
+	return nil
+}
+
+// GetPassageByInd returns Passage, given an Index and a Work
+func GetPassageByInd(i int, w Work) Passage {
+	return w.Passages[i]
+}
+
+// GetLast returns the last Passage given a Work
+func GetLast(w Work) Passage {
+	return w.Passages[len(w.Passages)-1]
+}
+
+// GetFirst returns the last Passage given a Work
+func GetFirst(w Work) Passage {
+	return w.Passages[0]
+}
+
+// GetNext returns the next Passage given a Work and a PassageID
+func GetNext(id string, w Work) Passage {
+	for i := range w.Passages {
+		if w.Passages[i].PassageID == id {
+			return w.Passages[*w.Passages[i].Prev.Index]
+		}
+	}
+	return Passage{}
+}
+
+// GetPrev returns the previous Passage given a Work and a PassageID
+func GetPrev(id string, w Work) Passage {
+	for i := range w.Passages {
+		if w.Passages[i].PassageID == id {
+			return w.Passages[*w.Passages[i].Prev.Index]
+		}
+	}
+	return Passage{}
+}

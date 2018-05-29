@@ -12,10 +12,22 @@ type testpair struct {
 	outputRange, outputCTS bool
 }
 
+type testpair2 struct {
+	input                                        string
+	outputTG, outputWork, outputVers, outputExmp bool
+}
+
 var tests = []testpair{
 	{input: "urn:cts:collection:workgroup.work:1-27", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:1-27", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "1-27"}, outputRange: true, outputCTS: true},
 	{input: "urn:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:27.3", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "27.3"}, outputRange: false, outputCTS: true},
 	{input: "not:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "not:cts:collection:workgroup.work:27.3", InValid: true}, outputRange: false, outputCTS: false}}
+
+var tests2 = []testpair2{
+	{input: "urn:cts:collection:workgroup:", outputTG: true, outputWork: false, outputVers: false, outputExmp: false},
+	{input: "urn:cts:collection:workgroup.work:27.3", outputTG: false, outputWork: true, outputVers: false, outputExmp: false},
+	{input: "urn:cts:collection:workgroup.work.version:27.3-29.9", outputTG: false, outputWork: false, outputVers: true, outputExmp: false},
+	{input: "urn:cts:collection:workgroup.work.version.exemplar:29.9", outputTG: false, outputWork: false, outputVers: false, outputExmp: true},
+}
 
 var firstPassage = gocite.Passage{
 	PassageID: "urn:cts:collection:workgroup.work:1",
@@ -30,10 +42,40 @@ var firstPassage = gocite.Passage{
 	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
 }
 
+var secondPassage = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:2-4",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is. the second. node.",
+	},
+	Index: 0,
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+}
+
+var thirdPassage = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:5",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is the third node.",
+	},
+	Index: 0,
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	Next:  gocite.PassLoc{PassageID: "", Index: nil},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
+}
+
 var testcorpus = gocite.Work{
-	WorkID:   "urn:cts:collection:workgroup.work:",
-	Passages: []gocite.Passage{},
-	Ordered:  true}
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		firstPassage,
+		secondPassage,
+		thirdPassage,
+	},
+	Ordered: true}
 
 func TestSplitCTS(t *testing.T) {
 	for _, pair := range tests {
@@ -68,6 +110,58 @@ func TestIsCTSURN(t *testing.T) {
 			t.Error(
 				"For", pair.input,
 				"expected", pair.outputCTS,
+				"got", v,
+			)
+		}
+	}
+}
+
+func TestIsTextgroupID(t *testing.T) {
+	for _, pair := range tests2 {
+		v := gocite.IsTextgroupID(pair.input)
+		if v != pair.outputTG {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.outputTG,
+				"got", v,
+			)
+		}
+	}
+}
+
+func TestIsWorkID(t *testing.T) {
+	for _, pair := range tests2 {
+		v := gocite.IsWorkID(pair.input)
+		if v != pair.outputWork {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.outputWork,
+				"got", v,
+			)
+		}
+	}
+}
+
+func TestIsVersionID(t *testing.T) {
+	for _, pair := range tests2 {
+		v := gocite.IsVersionID(pair.input)
+		if v != pair.outputVers {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.outputVers,
+				"got", v,
+			)
+		}
+	}
+}
+
+func TestIsExemplarID(t *testing.T) {
+	for _, pair := range tests2 {
+		v := gocite.IsExemplarID(pair.input)
+		if v != pair.outputExmp {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.outputExmp,
 				"got", v,
 			)
 		}
