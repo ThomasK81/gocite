@@ -193,3 +193,16 @@ func GetPrev(id string, w Work) Passage {
 	}
 	return Passage{}
 }
+
+// DelPassage deletes a Passage from a work by changing the references
+// to do...
+// func DelPassage(id string, w Work) Work {
+// 	result := w
+// 	index := GetIndexByID(id, w)
+// 	passage := GetPassageByInd(*index, w)
+// 	prevInd := passage.Prev.Index
+// 	nextInd := passage.Next.Index
+// 	prevPassage := GetPassageByInd(*prevInd, w)
+// 	nextPassage := GetPassageByInd(*nextInd, w)
+// 	prevPassage.
+// }
