@@ -26,11 +26,18 @@ type Work struct {
 
 // Passage is the smallest CTSNode
 type Passage struct {
-	PassageID               CTSURN
+	PassageID               string
 	Range                   bool
 	Text                    EncText
 	Index                   int
-	First, Last, Prev, Next *Passage
+	First, Last, Prev, Next PassLoc
+}
+
+// PassLoc is a container for the ID and
+// the Index of a Passage for First, Last, Prev, Next
+type PassLoc struct {
+	PassageID string
+	Index     *int
 }
 
 // EncText is a container for different encodings of the same textual information
