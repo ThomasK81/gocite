@@ -8,12 +8,14 @@ import (
 
 type testpair struct {
 	input  string
-	output gocite.URN
+	outputSplit gocite.CTSURN
+	outputRange, outputCTS bool
 }
 
 var tests = []testpair{
-	{"urn:cts:collection:workgroup.work:1-27", gocite.URN{Stem: "urn:cts:collection:workgroup.work:", Reference: "1-27"}},
-	{"urn:cts:collection:workgroup.work:27.3", gocite.URN{Stem: "urn:cts:collection:workgroup.work:", Reference: "27.3"}},
+	{input: "urn:cts:collection:workgroup.work:1-27", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:1-27", Base: "urn", Protocol: "cts", Namespace: "workgroup", Work: "work", Passage: "1-27"}, outputRange: true, outputCTS: true},
+	{input: "urn:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:27.3", Base: "urn", Protocol: "cts", Namespace: "workgroup", Work: "work", Passage: "27.3"}, outputRange: false, outputCTS: true},
+	{input: "not:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "not:cts:collection:workgroup.work:27.3", InValid: true}, outputRange: false, outputCTS: false}
 }
 
 func TestSplitCTS(t *testing.T) {
