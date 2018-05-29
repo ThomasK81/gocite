@@ -36,19 +36,14 @@ type Passage struct {
 // PassLoc is a container for the ID and
 // the Index of a Passage for First, Last, Prev, Next
 type PassLoc struct {
+	Exists    bool
 	PassageID string
-	Index     *int
+	Index     int
 }
 
 // EncText is a container for different encodings of the same textual information
 type EncText struct {
 	TXT, MarkDown, CEX, CSV, XML string
-}
-
-// CreateIndex takes an int and creates a pointer.
-// This helps to initialise PassLoc with real values
-func CreateIndex(x int) *int {
-	return &x
 }
 
 // SplitCTS splits a CTS URN in its stem and the passage reference
@@ -150,13 +145,13 @@ func GetPassageByID(id string, w Work) Passage {
 }
 
 // GetIndexByID searches for an ID in a given work and returns its Index
-func GetIndexByID(id string, w Work) *int {
+func GetIndexByID(id string, w Work) int {
 	for i := range w.Passages {
 		if w.Passages[i].PassageID == id {
-			return CreateIndex(i)
+			return i
 		}
 	}
-	return nil
+	return 0
 }
 
 // GetPassageByInd returns Passage, given an Index and a Work
@@ -178,7 +173,7 @@ func GetFirst(w Work) Passage {
 func GetNext(id string, w Work) Passage {
 	for i := range w.Passages {
 		if w.Passages[i].PassageID == id {
-			return w.Passages[*w.Passages[i].Prev.Index]
+			return w.Passages[w.Passages[i].Prev.Index]
 		}
 	}
 	return Passage{}
@@ -188,7 +183,7 @@ func GetNext(id string, w Work) Passage {
 func GetPrev(id string, w Work) Passage {
 	for i := range w.Passages {
 		if w.Passages[i].PassageID == id {
-			return w.Passages[*w.Passages[i].Prev.Index]
+			return w.Passages[w.Passages[i].Prev.Index]
 		}
 	}
 	return Passage{}
@@ -197,16 +192,16 @@ func GetPrev(id string, w Work) Passage {
 // DelPassage deletes a Passage from a work by changing the references
 func DelPassage(id string, w Work) Work {
 	index := GetIndexByID(id, w)
-	passage := GetPassageByInd(*index, w)
+	passage := GetPassageByInd(index, w)
 	prevInd := passage.Prev.Index
 	nextInd := passage.Next.Index
-	prevPassage := GetPassageByInd(*prevInd, w)
-	nextPassage := GetPassageByInd(*nextInd, w)
+	prevPassage := GetPassageByInd(prevInd, w)
+	nextPassage := GetPassageByInd(nextInd, w)
 	prevPassage.Next = passage.Next
 	nextPassage.Prev = passage.Prev
-	w.Passages[*index] = Passage{}
-	w.Passages[*prevInd] = prevPassage
-	w.Passages[*nextInd] = nextPassage
+	w.Passages[index] = Passage{}
+	w.Passages[prevInd] = prevPassage
+	w.Passages[nextInd] = nextPassage
 	w.Ordered = false
 	return w
 }

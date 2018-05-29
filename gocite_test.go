@@ -42,10 +42,10 @@ var firstPassage = gocite.Passage{
 		TXT: "This is the first node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 
 var firstPassageChange = gocite.Passage{
@@ -55,10 +55,10 @@ var firstPassageChange = gocite.Passage{
 		TXT: "This is the first node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(1)},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 1},
 }
 
 var thirdPassageChange = gocite.Passage{
@@ -68,10 +68,10 @@ var thirdPassageChange = gocite.Passage{
 		TXT: "This is the third node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Next:  gocite.PassLoc{PassageID: "", Index: nil},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(1)},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 1},
 }
 
 var secondPassage = gocite.Passage{
@@ -81,10 +81,10 @@ var secondPassage = gocite.Passage{
 		TXT: "This is. the second. node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 }
 
 var thirdPassage = gocite.Passage{
@@ -94,10 +94,10 @@ var thirdPassage = gocite.Passage{
 		TXT: "This is the third node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Next:  gocite.PassLoc{PassageID: "", Index: nil},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 
 var testcorpus = gocite.Work{
@@ -217,12 +217,21 @@ func TestIsExemplarID(t *testing.T) {
 func TestDelPassage(t *testing.T) {
 	for _, pair := range tests3 {
 		v := gocite.DelPassage(pair.inputID, pair.inputcorpus)
-		if v != pair.output {
+		if v.Ordered == pair.inputcorpus.Ordered {
 			t.Error(
 				"For deleting", pair.inputID,
-				"expected", pair.output,
-				"got", v,
+				"expected", false,
+				"got", true,
 			)
+		}
+		for i := range v.Passages {
+			if v.Passages[i] != pair.output.Passages[i] {
+				t.Error(
+					"For deleting", pair.inputID,
+					"expected", pair.output.Passages[i],
+					"got", v.Passages[i],
+				)
+			}
 		}
 	}
 }
