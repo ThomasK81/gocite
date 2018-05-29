@@ -17,6 +17,12 @@ type testpair2 struct {
 	outputTG, outputWork, outputVers, outputExmp bool
 }
 
+type testgroup struct {
+	inputcorpus gocite.Work
+	inputID     string
+	output      gocite.Work
+}
+
 var tests = []testpair{
 	{input: "urn:cts:collection:workgroup.work:1-27", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:1-27", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "1-27"}, outputRange: true, outputCTS: true},
 	{input: "urn:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:27.3", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "27.3"}, outputRange: false, outputCTS: true},
@@ -40,6 +46,32 @@ var firstPassage = gocite.Passage{
 	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
 	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
 	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
+}
+
+var firstPassageChange = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:1",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is the first node.",
+	},
+	Index: 0,
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(1)},
+}
+
+var thirdPassageChange = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:5",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is the third node.",
+	},
+	Index: 0,
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
+	Next:  gocite.PassLoc{PassageID: "", Index: nil},
+	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(1)},
 }
 
 var secondPassage = gocite.Passage{
@@ -75,7 +107,21 @@ var testcorpus = gocite.Work{
 		secondPassage,
 		thirdPassage,
 	},
-	Ordered: true}
+	Ordered: true,
+}
+
+var testcorpus2 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		firstPassageChange,
+		gocite.Passage{},
+		thirdPassageChange,
+	},
+	Ordered: false}
+
+var tests3 = []testgroup{
+	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
+}
 
 func TestSplitCTS(t *testing.T) {
 	for _, pair := range tests {
@@ -162,6 +208,19 @@ func TestIsExemplarID(t *testing.T) {
 			t.Error(
 				"For", pair.input,
 				"expected", pair.outputExmp,
+				"got", v,
+			)
+		}
+	}
+}
+
+func TestDelPassage(t *testing.T) {
+	for _, pair := range tests3 {
+		v := gocite.DelPassage(pair.inputID, pair.inputcorpus)
+		if v != pair.output {
+			t.Error(
+				"For deleting", pair.inputID,
+				"expected", pair.output,
 				"got", v,
 			)
 		}
