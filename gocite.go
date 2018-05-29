@@ -45,6 +45,12 @@ type EncText struct {
 	TXT, MarkDown, CEX, CSV, XML string
 }
 
+// CreateIndex takes an int and creates a pointer.
+// This helps to initialise PassLoc with real values
+func CreateIndex(x int) *int {
+	return &x
+}
+
 // SplitCTS splits a CTS URN in its stem and the passage reference
 func SplitCTS(s string) CTSURN {
 	if !IsCTSURN(s) {

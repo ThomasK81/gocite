@@ -24,10 +24,10 @@ var firstPassage = gocite.Passage{
 		TXT: "This is the first node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: gocite.CreateIndex(0)},
+	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: gocite.CreateIndex(2)},
 	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
+	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: gocite.CreateIndex(1)},
 }
 
 var testcorpus = gocite.Work{
