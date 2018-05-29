@@ -44,7 +44,7 @@ var firstPassage = gocite.Passage{
 	Index: 0,
 	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
+	Prev:  gocite.PassLoc{PassageID: "", Index: 0},
 	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 
@@ -57,7 +57,7 @@ var firstPassageChange = gocite.Passage{
 	Index: 0,
 	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Prev:  gocite.PassLoc{PassageID: "", Index: nil},
+	Prev:  gocite.PassLoc{PassageID: "", Index: 0},
 	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 1},
 }
 
@@ -70,7 +70,7 @@ var thirdPassageChange = gocite.Passage{
 	Index: 0,
 	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Next:  gocite.PassLoc{PassageID: "", Index: nil},
+	Next:  gocite.PassLoc{PassageID: "", Index: 0},
 	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 1},
 }
 
@@ -96,7 +96,7 @@ var thirdPassage = gocite.Passage{
 	Index: 0,
 	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Next:  gocite.PassLoc{PassageID: "", Index: nil},
+	Next:  gocite.PassLoc{PassageID: "", Index: 0},
 	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 

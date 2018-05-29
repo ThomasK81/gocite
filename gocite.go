@@ -195,13 +195,9 @@ func DelPassage(id string, w Work) Work {
 	passage := GetPassageByInd(index, w)
 	prevInd := passage.Prev.Index
 	nextInd := passage.Next.Index
-	prevPassage := GetPassageByInd(prevInd, w)
-	nextPassage := GetPassageByInd(nextInd, w)
-	prevPassage.Next = passage.Next
-	nextPassage.Prev = passage.Prev
+	w.Passages[prevInd].Next = passage.Next
+	w.Passages[nextInd].Prev = passage.Prev
 	w.Passages[index] = Passage{}
-	w.Passages[prevInd] = prevPassage
-	w.Passages[nextInd] = nextPassage
 	w.Ordered = false
 	return w
 }
