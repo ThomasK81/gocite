@@ -11,9 +11,9 @@ type CTSURN struct {
 	InValid                                      bool
 }
 
-// Workgroup is a collection of works
-type Workgroup struct {
-	WorkgroupID string
+// Textgroup is a collection of works
+type Textgroup struct {
+	TextgroupID string
 	Works       []Work
 }
 
@@ -30,12 +30,12 @@ type Passage struct {
 	Range                   bool
 	Text                    EncText
 	Index                   int
-	First, Last, Prev, Next string
+	First, Last, Prev, Next *Passage
 }
 
 // EncText is a container for different encodings of the same textual information
 type EncText struct {
-	TXT, MarkDown, XML string
+	TXT, MarkDown, CEX, CSV, XML string
 }
 
 // SplitCTS splits a CTS URN in its stem and the passage reference
@@ -80,4 +80,48 @@ func IsCTSURN(s string) bool {
 	default:
 		return true
 	}
+}
+
+// IsTextgroupID tests whether the CTSURN points to the textgroup level
+func IsTextgroupID(s string) bool {
+	if !IsCTSURN(s) {
+		return false
+	}
+	if len(strings.Split(SplitCTS(s).Work, ".")) != 1 {
+		return false
+	}
+	return true
+}
+
+// IsWorkID tests whether the CTSURN points to the textgroup level
+func IsWorkID(s string) bool {
+	if !IsCTSURN(s) {
+		return false
+	}
+	if len(strings.Split(SplitCTS(s).Work, ".")) != 2 {
+		return false
+	}
+	return true
+}
+
+// IsVersionID tests whether the CTSURN points to the textgroup level
+func IsVersionID(s string) bool {
+	if !IsCTSURN(s) {
+		return false
+	}
+	if len(strings.Split(SplitCTS(s).Work, ".")) != 3 {
+		return false
+	}
+	return true
+}
+
+// IsExemplarID tests whether the CTSURN points to the textgroup level
+func IsExemplarID(s string) bool {
+	if !IsCTSURN(s) {
+		return false
+	}
+	if len(strings.Split(SplitCTS(s).Work, ".")) != 4 {
+		return false
+	}
+	return true
 }
