@@ -201,13 +201,13 @@ func DelPassage(id string, w Work) Work {
 	}
 	passage := GetPassageByInd(index, w)
 	switch {
-	case !w.Passages[0].Prev.Exists && !w.Passages[0].Next.Exists:
+	case !w.Passages[index].Prev.Exists && !w.Passages[index].Next.Exists:
 		temp := Work{WorkID: w.WorkID, Ordered: true}
 		return temp
-	case !w.Passages[0].Prev.Exists:
+	case !w.Passages[index].Prev.Exists:
 		w := DelFirstPassage(w)
 		return w
-	case !w.Passages[0].Next.Exists:
+	case !w.Passages[index].Next.Exists:
 		w := DelLastPassage(w)
 		return w
 	default:

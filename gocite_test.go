@@ -241,8 +241,8 @@ func TestDelPassage(t *testing.T) {
 		if v.Ordered == pair.inputcorpus.Ordered {
 			t.Error(
 				"For deleting", pair.inputID,
-				"expected", false,
-				"got", true,
+				"expected", !pair.inputcorpus.Ordered,
+				"got", pair.inputcorpus.Ordered,
 			)
 		}
 		for i := range v.Passages {
