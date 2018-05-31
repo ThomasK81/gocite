@@ -297,3 +297,36 @@ func SortPassages(w Work) Work {
 	}
 	return result
 }
+
+// InsertPassage inserts a Passage into a Work
+func InsertPassage(p Passage, w Work) Work {
+	if len(w.Passages) == 0 {
+		p.First = PassLoc{Exists: true, PassageID: p.PassageID, Index: 0}
+		p.Last = PassLoc{Exists: true, PassageID: p.PassageID, Index: 0}
+		p.Next = PassLoc{}
+		p.Prev = PassLoc{}
+		w.Passages = append(w.Passages, p)
+		return w
+	}
+	nextIndex, nextExists := GetIndexByID(p.Next.PassageID, w)
+	prevIndex, prevExists := GetIndexByID(p.Prev.PassageID, w)
+	passloc := PassLoc{Exists: true, PassageID: p.PassageID, Index: len(w.Passages)}
+	w.Passages = append(w.Passages, p)
+	switch {
+	case !nextExists && prevExists:
+		w.Passages[prevIndex].Next = passloc
+		for i := range w.Passages {
+			w.Passages[i].Last = passloc
+		}
+	case nextExists && !prevExists:
+		w.Passages[nextIndex].Prev = passloc
+		for i := range w.Passages {
+			w.Passages[i].First = passloc
+		}
+	default:
+		w.Passages[prevIndex].Next = passloc
+		w.Passages[nextIndex].Prev = passloc
+	}
+	w.Ordered = false
+	return w
+}

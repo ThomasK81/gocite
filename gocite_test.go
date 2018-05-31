@@ -125,7 +125,25 @@ var testcorpus3 = gocite.Work{
 		firstPassageChange,
 		thirdPassageChange,
 	},
-	Ordered: false}
+	Ordered: true}
+
+var testcorpus4 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		firstPassageChange,
+		thirdPassageChange,
+	},
+	Ordered: true}
+
+var testcorpus5 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		firstPassage,
+		secondPassage,
+		thirdPassage,
+	},
+	Ordered: false,
+}
 
 var tests3 = []testgroup{
 	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
@@ -137,6 +155,10 @@ var tests4a = []testgroup{
 
 var tests4 = []testgroup{
 	testgroup{inputcorpus: testcorpus2, output: testcorpus3},
+}
+
+var tests5 = []testgroup{
+	testgroup{inputcorpus: testcorpus4, output: testcorpus5},
 }
 
 func TestSplitCTS(t *testing.T) {
@@ -285,11 +307,30 @@ func TestSortPassages(t *testing.T) {
 		for i := range v.Passages {
 			if v.Passages[i] != pair.output.Passages[i] {
 				t.Error(
-					"For test ", j, i, len(v.Passages),
+					"For test ", j, i,
 					"expected", pair.output.Passages[i],
 					"got", v.Passages[i],
 				)
 			}
+		}
+	}
+}
+
+func TestInsertPassage(t *testing.T) {
+	v := gocite.InsertPassage(secondPassage, tests5[0].inputcorpus)
+	if v.Ordered == true {
+		t.Error(
+			"Expected ordered", false,
+			"got", true,
+		)
+	}
+	for i := range v.Passages {
+		if v.Passages[i] != tests5[0].output.Passages[i] {
+			t.Error(
+				"For test ", i,
+				"expected", tests5[0].output.Passages[i],
+				"got", v.Passages[i],
+			)
 		}
 	}
 }
