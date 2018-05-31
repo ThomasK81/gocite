@@ -42,10 +42,10 @@ var firstPassage = gocite.Passage{
 		TXT: "This is the first node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Prev:  gocite.PassLoc{PassageID: "", Index: 0},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 
 var firstPassageChange = gocite.Passage{
@@ -55,10 +55,10 @@ var firstPassageChange = gocite.Passage{
 		TXT: "This is the first node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Prev:  gocite.PassLoc{PassageID: "", Index: 0},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 }
 
 var thirdPassageChange = gocite.Passage{
@@ -68,10 +68,10 @@ var thirdPassageChange = gocite.Passage{
 		TXT: "This is the third node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Next:  gocite.PassLoc{PassageID: "", Index: 0},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Next:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 }
 
 var secondPassage = gocite.Passage{
@@ -81,10 +81,10 @@ var secondPassage = gocite.Passage{
 		TXT: "This is. the second. node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Next:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 }
 
 var thirdPassage = gocite.Passage{
@@ -94,10 +94,10 @@ var thirdPassage = gocite.Passage{
 		TXT: "This is the third node.",
 	},
 	Index: 0,
-	First: gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
-	Last:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
-	Next:  gocite.PassLoc{PassageID: "", Index: 0},
-	Prev:  gocite.PassLoc{PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Next:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2-4", Index: 1},
 }
 
 var testcorpus = gocite.Work{
@@ -119,8 +119,29 @@ var testcorpus2 = gocite.Work{
 	},
 	Ordered: false}
 
+var testcorpus3 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		gocite.Passage{},
+		thirdPassageChange,
+		firstPassageChange,
+	},
+	Ordered: false}
+
+var testcorpus4 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		firstPassageChange,
+		thirdPassageChange,
+	},
+	Ordered: false}
+
 var tests3 = []testgroup{
 	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
+}
+
+var tests4 = []testgroup{
+	testgroup{inputcorpus: testcorpus3, output: testcorpus4},
 }
 
 func TestSplitCTS(t *testing.T) {
@@ -228,6 +249,28 @@ func TestDelPassage(t *testing.T) {
 			if v.Passages[i] != pair.output.Passages[i] {
 				t.Error(
 					"For deleting", pair.inputID,
+					"expected", pair.output.Passages[i],
+					"got", v.Passages[i],
+				)
+			}
+		}
+	}
+}
+
+func TestSortPassages(t *testing.T) {
+	for j, pair := range tests4 {
+		v := gocite.SortPassages(pair.inputcorpus)
+		if v.Ordered == false {
+			t.Error(
+				"For test ", j,
+				"expected", true,
+				"got", false,
+			)
+		}
+		for i := range v.Passages {
+			if v.Passages[i] != pair.output.Passages[i] {
+				t.Error(
+					"For test ", j,
 					"expected", pair.output.Passages[i],
 					"got", v.Passages[i],
 				)

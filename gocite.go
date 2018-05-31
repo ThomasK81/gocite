@@ -145,13 +145,14 @@ func GetPassageByID(id string, w Work) Passage {
 }
 
 // GetIndexByID searches for an ID in a given work and returns its Index
-func GetIndexByID(id string, w Work) int {
+// It also returns a bool whether it has found the Passage
+func GetIndexByID(id string, w Work) (int, bool) {
 	for i := range w.Passages {
 		if w.Passages[i].PassageID == id {
-			return i
+			return i, true
 		}
 	}
-	return 0
+	return 0, false
 }
 
 // GetPassageByInd returns Passage, given an Index and a Work
@@ -191,13 +192,107 @@ func GetPrev(id string, w Work) Passage {
 
 // DelPassage deletes a Passage from a work by changing the references
 func DelPassage(id string, w Work) Work {
-	index := GetIndexByID(id, w)
+	if len(w.Passages) == 0 {
+		return w
+	}
+	index, found := GetIndexByID(id, w)
+	if !found {
+		return w
+	}
 	passage := GetPassageByInd(index, w)
-	prevInd := passage.Prev.Index
-	nextInd := passage.Next.Index
-	w.Passages[prevInd].Next = passage.Next
-	w.Passages[nextInd].Prev = passage.Prev
-	w.Passages[index] = Passage{}
-	w.Ordered = false
+	switch {
+	case !w.Passages[0].Prev.Exists && !w.Passages[0].Next.Exists:
+		temp := Work{WorkID: w.WorkID, Ordered: true}
+		return temp
+	case !w.Passages[0].Prev.Exists:
+		w := DelFirstPassage(w)
+		return w
+	case !w.Passages[0].Next.Exists:
+		w := DelLastPassage(w)
+		return w
+	default:
+		prevInd := passage.Prev.Index
+		nextInd := passage.Next.Index
+		w.Passages[prevInd].Next = passage.Next
+		w.Passages[nextInd].Prev = passage.Prev
+		w.Passages[index] = Passage{}
+		w.Ordered = false
+	}
 	return w
+}
+
+// DelFirstPassage deletes the first Passage from a work by changing the references
+func DelFirstPassage(w Work) Work {
+	if len(w.Passages) == 0 {
+		return w
+	}
+	passageIndex, found := FindFirstIndex(w)
+	if !found {
+		return w
+	}
+	newFirst := w.Passages[passageIndex].Next
+	for i := range w.Passages {
+		w.Passages[i].First = newFirst
+	}
+	w.Passages[newFirst.Index].Prev = PassLoc{}
+	w.Passages[passageIndex] = Passage{}
+	return w
+}
+
+// DelLastPassage deletes the last Passage from a work by changing the references
+func DelLastPassage(w Work) Work {
+	if len(w.Passages) == 0 {
+		return w
+	}
+	passageIndex, found := FindLastIndex(w)
+	if !found {
+		return w
+	}
+	newLast := w.Passages[passageIndex].Prev
+	for i := range w.Passages {
+		w.Passages[i].Last = newLast
+	}
+	w.Passages[newLast.Index].Next = PassLoc{}
+	w.Passages[passageIndex] = Passage{}
+	return w
+}
+
+// FindFirstIndex returns the first Index of the Passages in a Work.
+// It also returns a bool whether it has found one.
+func FindFirstIndex(w Work) (int, bool) {
+	for i := range w.Passages {
+		if w.Passages[i].First.Exists {
+			return w.Passages[i].First.Index, true
+		}
+	}
+	return 0, false
+}
+
+// FindLastIndex returns the first Index of the Passages in a Work.
+// It also returns a bool whether it has found one.
+func FindLastIndex(w Work) (int, bool) {
+	for i := range w.Passages {
+		if w.Passages[i].Last.Exists {
+			return w.Passages[i].Last.Index, true
+		}
+	}
+	return 0, false
+}
+
+// SortPassages sorts the Passages in a Work from First to Last, empty Passages are being deleted
+func SortPassages(w Work) Work {
+	if len(w.Passages) == 0 {
+		return w
+	}
+	cursor, found := FindFirstIndex(w)
+	if !found {
+		return w
+	}
+	notlast := true
+	result := Work{WorkID: w.WorkID, Ordered: true}
+	for notlast == true {
+		result.Passages = append(result.Passages, w.Passages[cursor])
+		notlast = w.Passages[cursor].Next.Exists
+	}
+	return result
 }
