@@ -155,6 +155,24 @@ var testcorpus6 = gocite.Work{
 	Ordered: false,
 }
 
+var testcorpus7 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Next: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 1}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 0}},
+	},
+	Ordered: true}
+
+var testcorpus8 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
+		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
+	},
+	Ordered: false,
+}
+
 var tests3 = []testgroup{
 	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
 }
@@ -170,7 +188,7 @@ var tests4 = []testgroup{
 }
 
 var tests5 = []testgroup{
-	testgroup{inputcorpus: testcorpus4, output: testcorpus5},
+	testgroup{inputcorpus: testcorpus7, output: testcorpus8},
 }
 
 func TestSplitCTS(t *testing.T) {

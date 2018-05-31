@@ -326,20 +326,30 @@ func InsertPassage(p Passage, w Work) Work {
 	}
 	nextIndex, nextExists := GetIndexByID(p.Next.PassageID, w)
 	prevIndex, prevExists := GetIndexByID(p.Prev.PassageID, w)
+	firstIndex, _ := FindFirstIndex(w)
+	lastIndex, _ := FindLastIndex(w)
 	passloc := PassLoc{Exists: true, PassageID: p.PassageID, Index: len(w.Passages)}
-	w.Passages = append(w.Passages, p)
+	p.First = PassLoc{Exists: true, PassageID: w.Passages[firstIndex].PassageID, Index: firstIndex}
+	p.Last = PassLoc{Exists: true, PassageID: w.Passages[lastIndex].PassageID, Index: lastIndex}
 	switch {
 	case !nextExists && prevExists:
+		p.Next = PassLoc{}
+		p.Prev = PassLoc{Exists: true, PassageID: w.Passages[prevIndex].PassageID, Index: prevIndex}
+		w.Passages = append(w.Passages, p)
 		w.Passages[prevIndex].Next = passloc
 		for i := range w.Passages {
 			w.Passages[i].Last = passloc
 		}
 	case nextExists && !prevExists:
+		p.Prev = PassLoc{}
+		p.Next = PassLoc{Exists: true, PassageID: w.Passages[nextIndex].PassageID, Index: nextIndex}
+		w.Passages = append(w.Passages, p)
 		w.Passages[nextIndex].Prev = passloc
 		for i := range w.Passages {
 			w.Passages[i].First = passloc
 		}
 	default:
+		w.Passages = append(w.Passages, p)
 		w.Passages[prevIndex].Next = passloc
 		w.Passages[nextIndex].Prev = passloc
 		w.Passages[len(w.Passages)-1].Index = len(w.Passages) - 1
