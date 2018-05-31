@@ -339,7 +339,7 @@ func TestInsertPassage(t *testing.T) {
 	for i := range v.Passages {
 		if v.Passages[i] != tests5[0].output.Passages[i] {
 			t.Error(
-				"For test ", i,
+				"For test", i,
 				"expected", tests5[0].output.Passages[i],
 				"got", v.Passages[i],
 			)
