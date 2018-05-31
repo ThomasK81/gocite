@@ -1,6 +1,7 @@
 package gocite_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/ThomasK81/gocite"
@@ -324,6 +325,7 @@ func TestSortPassages(t *testing.T) {
 				)
 			}
 		}
+		fmt.Print(".")
 	}
 }
 

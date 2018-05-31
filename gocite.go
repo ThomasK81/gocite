@@ -1,7 +1,6 @@
 package gocite
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -289,12 +288,13 @@ func SortPassages(w Work) Work {
 	if !found {
 		return w
 	}
-	notlast := true
+	last := false
 	result := Work{WorkID: w.WorkID, Ordered: true}
-	for notlast {
-		fmt.Println(cursor)
+	for last == false {
 		result.Passages = append(result.Passages, w.Passages[cursor])
-		notlast = w.Passages[cursor].Next.Exists
+		if w.Passages[cursor].PassageID == w.Passages[cursor].Last.PassageID {
+			last = true
+		}
 		cursor = w.Passages[cursor].Next.Index
 	}
 	return result
