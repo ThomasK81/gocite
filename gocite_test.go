@@ -158,8 +158,8 @@ var testcorpus6 = gocite.Work{
 var testcorpus7 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Next: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 1}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 0}},
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
 	},
 	Ordered: true}
 

@@ -327,10 +327,10 @@ func InsertPassage(p Passage, w Work) Work {
 	nextIndex, nextExists := GetIndexByID(p.Next.PassageID, w)
 	prevIndex, prevExists := GetIndexByID(p.Prev.PassageID, w)
 	firstIndex, _ := FindFirstIndex(w)
-	// lastIndex, _ := FindLastIndex(w)
+	lastIndex, _ := FindLastIndex(w)
 	passloc := PassLoc{Exists: true, PassageID: p.PassageID, Index: len(w.Passages)}
 	p.First = PassLoc{Exists: true, PassageID: w.Passages[firstIndex].PassageID, Index: firstIndex}
-	// p.Last = PassLoc{Exists: true, PassageID: w.Passages[lastIndex].PassageID, Index: lastIndex}
+	p.Last = PassLoc{Exists: true, PassageID: w.Passages[lastIndex].PassageID, Index: lastIndex}
 	switch {
 	case !nextExists && prevExists:
 		p.Next = PassLoc{}
