@@ -1,7 +1,6 @@
 package gocite_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ThomasK81/gocite"
@@ -139,9 +138,9 @@ var testcorpus4 = gocite.Work{
 var testcorpus5 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: firstPassageChange.Index, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: thirdPassageChange.Index, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: thirdPassageChange.Last},
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
+		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
 	},
 	Ordered: false,
 }
@@ -326,7 +325,6 @@ func TestSortPassages(t *testing.T) {
 				)
 			}
 		}
-		fmt.Print(".")
 	}
 }
 
