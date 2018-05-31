@@ -138,9 +138,19 @@ var testcorpus4 = gocite.Work{
 var testcorpus5 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		firstPassage,
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: firstPassageChange.Index, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: thirdPassageChange.Index, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
 		secondPassage,
-		thirdPassage,
+	},
+	Ordered: false,
+}
+
+var testcorpus6 = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 1}},
+		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
+		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 2, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 0}},
 	},
 	Ordered: false,
 }
@@ -155,6 +165,7 @@ var tests4a = []testgroup{
 
 var tests4 = []testgroup{
 	testgroup{inputcorpus: testcorpus2, output: testcorpus3},
+	testgroup{inputcorpus: testcorpus5, output: testcorpus6},
 }
 
 var tests5 = []testgroup{
