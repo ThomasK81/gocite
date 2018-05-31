@@ -349,6 +349,8 @@ func InsertPassage(p Passage, w Work) Work {
 			w.Passages[i].First = passloc
 		}
 	default:
+		p.Next = PassLoc{Exists: true, PassageID: w.Passages[nextIndex].PassageID, Index: nextIndex}
+		p.Prev = PassLoc{Exists: true, PassageID: w.Passages[prevIndex].PassageID, Index: prevIndex}
 		w.Passages = append(w.Passages, p)
 		w.Passages[prevIndex].Next = passloc
 		w.Passages[nextIndex].Prev = passloc
