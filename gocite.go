@@ -342,6 +342,7 @@ func InsertPassage(p Passage, w Work) Work {
 	default:
 		w.Passages[prevIndex].Next = passloc
 		w.Passages[nextIndex].Prev = passloc
+		w.Passages[len(w.Passages)-1].Index = len(w.Passages) - 1
 	}
 	w.Ordered = false
 	return w
