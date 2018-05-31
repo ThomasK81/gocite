@@ -122,15 +122,6 @@ var testcorpus2 = gocite.Work{
 var testcorpus3 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{},
-		thirdPassageChange,
-		firstPassageChange,
-	},
-	Ordered: false}
-
-var testcorpus4 = gocite.Work{
-	WorkID: "urn:cts:collection:workgroup.work:",
-	Passages: []gocite.Passage{
 		firstPassageChange,
 		thirdPassageChange,
 	},
@@ -140,8 +131,12 @@ var tests3 = []testgroup{
 	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
 }
 
+var tests4a = []testgroup{
+	testgroup{inputcorpus: testcorpus3, inputID: firstPassageChange.First.PassageID},
+}
+
 var tests4 = []testgroup{
-	testgroup{inputcorpus: testcorpus3, output: testcorpus4},
+	testgroup{inputcorpus: testcorpus2, output: testcorpus3},
 }
 
 func TestSplitCTS(t *testing.T) {
@@ -257,6 +252,26 @@ func TestDelPassage(t *testing.T) {
 	}
 }
 
+func TestFindFirstIndex(t *testing.T) {
+	for _, pair := range tests4a {
+		v, found := gocite.FindFirstIndex(pair.inputcorpus)
+		if found != true {
+			t.Error(
+				"For test ", pair.inputcorpus.WorkID,
+				"expected", true,
+				"got", false,
+			)
+		}
+		if pair.inputcorpus.Passages[v].PassageID != pair.inputID {
+			t.Error(
+				"For test ", pair.inputcorpus.WorkID,
+				"expected", pair.inputID,
+				"got", pair.inputcorpus.Passages[v].PassageID,
+			)
+		}
+	}
+}
+
 func TestSortPassages(t *testing.T) {
 	for j, pair := range tests4 {
 		v := gocite.SortPassages(pair.inputcorpus)
@@ -270,7 +285,7 @@ func TestSortPassages(t *testing.T) {
 		for i := range v.Passages {
 			if v.Passages[i] != pair.output.Passages[i] {
 				t.Error(
-					"For test ", j,
+					"For test ", j, i, len(v.Passages),
 					"expected", pair.output.Passages[i],
 					"got", v.Passages[i],
 				)
