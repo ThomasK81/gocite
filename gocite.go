@@ -290,9 +290,10 @@ func SortPassages(w Work) Work {
 	}
 	notlast := true
 	result := Work{WorkID: w.WorkID, Ordered: true}
-	for notlast == true {
+	for notlast {
 		result.Passages = append(result.Passages, w.Passages[cursor])
 		notlast = w.Passages[cursor].Next.Exists
+		cursor = w.Passages[cursor].Next.Index
 	}
 	return result
 }
