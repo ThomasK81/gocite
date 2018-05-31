@@ -288,12 +288,11 @@ func SortPassages(w Work) Work {
 	if !found {
 		return w
 	}
-	last := false
 	result := Work{WorkID: w.WorkID, Ordered: true}
-	for last == false {
+	for {
 		result.Passages = append(result.Passages, w.Passages[cursor])
 		if w.Passages[cursor].PassageID == w.Passages[cursor].Last.PassageID {
-			last = true
+			break
 		}
 		cursor = w.Passages[cursor].Next.Index
 	}
