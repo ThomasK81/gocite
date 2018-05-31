@@ -67,7 +67,7 @@ var thirdPassageChange = gocite.Passage{
 	Text: gocite.EncText{
 		TXT: "This is the third node.",
 	},
-	Index: 0,
+	Index: 2,
 	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Next:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
@@ -80,7 +80,7 @@ var secondPassage = gocite.Passage{
 	Text: gocite.EncText{
 		TXT: "This is. the second. node.",
 	},
-	Index: 0,
+	Index: 1,
 	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
@@ -93,7 +93,7 @@ var thirdPassage = gocite.Passage{
 	Text: gocite.EncText{
 		TXT: "This is the third node.",
 	},
-	Index: 0,
+	Index: 2,
 	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 	Next:  gocite.PassLoc{Exists: false, PassageID: "", Index: 0},
