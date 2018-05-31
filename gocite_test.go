@@ -141,7 +141,7 @@ var testcorpus5 = gocite.Work{
 	Passages: []gocite.Passage{
 		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: firstPassageChange.Index, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
 		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: thirdPassageChange.Index, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		secondPassage,
+		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: thirdPassageChange.Last},
 	},
 	Ordered: false,
 }
@@ -162,6 +162,7 @@ var tests3 = []testgroup{
 
 var tests4a = []testgroup{
 	testgroup{inputcorpus: testcorpus3, inputID: firstPassageChange.First.PassageID},
+	testgroup{inputcorpus: testcorpus5, inputID: firstPassageChange.First.PassageID},
 }
 
 var tests4 = []testgroup{
