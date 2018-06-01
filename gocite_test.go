@@ -432,6 +432,11 @@ var extrtest = []extractgroup{
 			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is"},
 		}},
 	extractgroup{
+		input: "urn:cts:collection:workgroup.work:2@is[2]-2@second",
+		answer: []gocite.TextAndID{
+			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2@is[2]-2@second", Text: "is. the second"},
+		}},
+	extractgroup{
 		input: "urn:cts:collection:workgroup.work:1@is-3",
 		answer: []gocite.TextAndID{
 			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is", Text: "is is is the first node."},
