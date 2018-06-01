@@ -514,21 +514,21 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 		start, end, err := findStartEnd(id)
 		firstid := start
 		lastid := end
-		samestart, _ := GetIndexByID(start, w)
-		sameend, _ := GetIndexByID(end, w)
-		if samestart == sameend {
+		startRoot := strings.Split(start, "@")
+		endRoot := strings.Split(end, "@")
+		if startRoot[0] == endRoot[0] {
 			if !WantSubstr(start) || !WantSubstr(end) {
 				return []TextAndID{}, errors.New("substringing in the same line has the format 1@start-1@end")
 			}
-			p, err := GetPassageByID(start, w)
+			p, err := GetPassageByID(startRoot[0], w)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = ReturnSubStr(startcmd, p.Text.TXT)
+			p.Text.TXT, err = ReturnSubStr(startRoot[1], p.Text.TXT)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = ReturnSubStr(endcmd, p.Text.TXT)
+			p.Text.TXT, err = RReturnSubStr(endRoot[1], p.Text.TXT)
 			if err != nil {
 				return []TextAndID{}, err
 			}
