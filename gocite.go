@@ -563,13 +563,13 @@ func ExtractTextByID(id string, w Work) ([]string, error) {
 			}
 		}
 		if startsub {
-			text[0], err = ReturnSubStr(startcmd, start)
+			text[0], err = ReturnSubStr(startcmd, text[0])
 			if err != nil {
 				return []string{}, err
 			}
 		}
 		if endsub {
-			text[len(text)-1], err = RReturnSubStr(endcmd, end)
+			text[len(text)-1], err = RReturnSubStr(endcmd, text[len(text)-1])
 			if err != nil {
 				return []string{}, err
 			}
