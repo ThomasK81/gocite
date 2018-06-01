@@ -514,7 +514,9 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 		start, end, err := findStartEnd(id)
 		firstid := start
 		lastid := end
-		if start == end {
+		samestart, _ := GetIndexByID(start, w)
+		sameend, _ := GetIndexByID(end, w)
+		if samestart == sameend {
 			if !WantSubstr(start) || !WantSubstr(end) {
 				return []TextAndID{}, errors.New("substringing in the same line has the format 1@start-1@end")
 			}
@@ -526,11 +528,11 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = RReturnSubStr(endcmd, p.Text.TXT)
+			p.Text.TXT, err = ReturnSubStr(endcmd, p.Text.TXT)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{Text: "hallo!"}}, nil
+			return []TextAndID{TextAndID{ID: id, Text: p.Text.TXT}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
