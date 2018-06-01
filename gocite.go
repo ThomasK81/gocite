@@ -4,11 +4,27 @@ import (
 	"strings"
 )
 
+// CiteVerb implemented similar to https://github.com/cite-architecture/cite-verbs/blob/master/cite-collection/cite-verbs-data-draft.csv
+type CiteVerb struct {
+	ID, Summary, Subject, Object, InverseID string
+}
+
+// Cite2Urn implemented as outlined here http://cite-architecture.github.io/2017/02/02/cite2urn_update/
+type Cite2Urn struct {
+	ID, Base, Protocol, Namespace, Collection, Object string
+	InValid                                           bool
+}
+
 // CTSURN references text as explained in http://cite-architecture.github.io
 // For a note on CTS citations see https://github.com/cite-architecture/ctsurn_spec/blob/master/md/specification.md
 type CTSURN struct {
 	ID, Base, Protocol, Namespace, Work, Passage string
 	InValid                                      bool
+}
+
+// Triple is a Simple LinkedData-Triple implementation, possible type assertion at a later stage
+type Triple struct {
+	subject, verb, object interface{}
 }
 
 // Textgroup is a collection of works
