@@ -474,6 +474,7 @@ func before(value string, a string) (string, error) {
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
 func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
+	temp := id
 	text := []string{}
 	extrID := []string{}
 	startsub := false
@@ -511,7 +512,6 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
 		}
 	case true:
-		temp := id
 		start, end, err := findStartEnd(id)
 		firstid := start
 		lastid := end
