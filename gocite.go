@@ -501,11 +501,11 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 				return []TextAndID{}, err
 			}
 			txt := p.Text.TXT
-			txt, err = ReturnSubStr(idSl[1], txt)
+			_, err = ReturnSubStr(idSl[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: id, Text: txt}}, nil
+			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
 		}
 	case true:
 		start, end, err := findStartEnd(id)
