@@ -427,11 +427,37 @@ var extrtest = []extractgroup{
 			"is is is the first node.",
 		}},
 	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1@is[2]",
+		answer: []string{
+			"is is the first node.",
+		}},
+	extractgroup{
 		input: "urn:cts:collection:workgroup.work:1@is-3",
 		answer: []string{
 			"is is is the first node.",
 			"This is. the second. node.",
 			"This is the third node.",
+		}},
+	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1@is[2]-3",
+		answer: []string{
+			"is is the first node.",
+			"This is. the second. node.",
+			"This is the third node.",
+		}},
+	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1@is[2]-3@third",
+		answer: []string{
+			"is is the first node.",
+			"This is. the second. node.",
+			"This is the third",
+		}},
+	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1@is[2]-3@is[2]",
+		answer: []string{
+			"is is the first node.",
+			"This is. the second. node.",
+			"This is",
 		}},
 }
 
