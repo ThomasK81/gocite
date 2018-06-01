@@ -474,7 +474,6 @@ func before(value string, a string) (string, error) {
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
 func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
-	temp := id
 	text := []string{}
 	extrID := []string{}
 	startsub := false
@@ -527,11 +526,11 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = ReturnSubStr(endcmd, p.Text.TXT)
+			p.Text.TXT, err = RReturnSubStr(endcmd, p.Text.TXT)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: "what" + temp, Text: p.Text.TXT}}, nil
+			return []TextAndID{TextAndID{ID: "what", Text: p.Text.TXT}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
