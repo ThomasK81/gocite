@@ -59,6 +59,11 @@ type PassLoc struct {
 	Index     int
 }
 
+// TextAndID is a container for a text-extract and its ID
+type TextAndID struct {
+	ID, Text string
+}
+
 // EncText is a container for different encodings of the same textual information
 type EncText struct {
 	TXT, MarkDown, CEX, XML string
@@ -467,14 +472,15 @@ func before(value string, a string) (string, error) {
 }
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
-func ExtractTextByID(id string, w Work) ([]string, error) {
+func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 	text := []string{}
+	extrID := []string{}
 	startsub := false
 	endsub := false
 	startcmd := ""
 	endcmd := ""
 	if !IsCTSURN(id) {
-		return text, errors.New("urn is not a valid cts urn")
+		return []TextAndID{}, errors.New("urn is not a valid cts urn")
 	}
 	switch IsRange(id) {
 	case false:
@@ -482,34 +488,36 @@ func ExtractTextByID(id string, w Work) ([]string, error) {
 		case false:
 			p, err := GetPassageByID(id, w)
 			if err != nil {
-				return []string{}, err
+				return []TextAndID{}, err
 			}
-			text = append(text, p.Text.TXT)
+			return []TextAndID{TextAndID{ID: id, Text: p.Text.TXT}}, nil
 		case true:
 			idSl := strings.Split(id, "@")
 			if len(idSl) != 2 {
-				return []string{}, errors.New("two many @")
+				return []TextAndID{}, errors.New("two many @")
 			}
 			p, err := GetPassageByID(idSl[0], w)
 			if err != nil {
-				return []string{}, err
+				return []TextAndID{}, err
 			}
 			txt := p.Text.TXT
 			txt, err = ReturnSubStr(idSl[1], txt)
 			if err != nil {
-				return []string{}, err
+				return []TextAndID{}, err
 			}
-			text = append(text, txt)
+			return []TextAndID{TextAndID{ID: id, Text: txt}}, nil
 		}
 	case true:
 		start, end, err := findStartEnd(id)
+		firstid := start
+		lastid := end
 		if err != nil {
-			return []string{}, err
+			return []TextAndID{}, err
 		}
 		if WantSubstr(start) {
 			idSl := strings.Split(start, "@")
 			if len(idSl) != 2 {
-				return []string{}, errors.New("two many @")
+				return []TextAndID{}, errors.New("two many @")
 			}
 			startsub = true
 			start = idSl[0]
@@ -518,7 +526,7 @@ func ExtractTextByID(id string, w Work) ([]string, error) {
 		if WantSubstr(end) {
 			idSl2 := strings.Split(end, "@")
 			if len(idSl2) != 2 {
-				return []string{}, errors.New("two many @")
+				return []TextAndID{}, errors.New("two many @")
 			}
 			endsub = true
 			end = idSl2[0]
@@ -529,35 +537,51 @@ func ExtractTextByID(id string, w Work) ([]string, error) {
 			startindex, found := GetIndexByID(start, w)
 			endindex, found2 := GetIndexByID(end, w)
 			if !found || !found2 {
-				return []string{}, errors.New("passage not found")
+				return []TextAndID{}, errors.New("passage not found")
 			}
 			for i := startindex; i < endindex+1; i++ {
+				switch i {
+				case startindex:
+					extrID = append(extrID, firstid)
+				case endindex:
+					extrID = append(extrID, lastid)
+				default:
+					extrID = append(extrID, w.Passages[i].PassageID)
+				}
 				text = append(text, w.Passages[i].Text.TXT)
 			}
 		case false:
 			_, found := GetIndexByID(start, w)
 			_, found2 := GetIndexByID(end, w)
 			if !found || !found2 {
-				return []string{}, errors.New("passage not found")
+				return []TextAndID{}, errors.New("passage not found")
 			}
 			found = false
 			startID := start
 			IDsVisited := []string{}
 			for !found {
 				p, err := GetPassageByID(startID, w)
+				switch startID {
+				case start:
+					extrID = append(extrID, firstid)
+				case end:
+					extrID = append(extrID, lastid)
+				default:
+					extrID = append(extrID, p.PassageID)
+				}
 				if err != nil {
-					return []string{}, errors.New("passage not found")
+					return []TextAndID{}, errors.New("passage not found")
 				}
 				startID = p.Next.PassageID
 				if contains(IDsVisited, startID) {
-					return []string{}, errors.New("work is loopy")
+					return []TextAndID{}, errors.New("work is loopy")
 				}
 				IDsVisited = append(IDsVisited, startID)
 				if p.PassageID == end {
 					found = true
 				}
 				if p.PassageID != end && p.Next.Exists != true {
-					return []string{}, errors.New("unexpected end of work")
+					return []TextAndID{}, errors.New("unexpected end of work")
 				}
 				text = append(text, p.Text.TXT)
 			}
@@ -565,17 +589,21 @@ func ExtractTextByID(id string, w Work) ([]string, error) {
 		if startsub {
 			text[0], err = ReturnSubStr(startcmd, text[0])
 			if err != nil {
-				return []string{}, err
+				return []TextAndID{}, err
 			}
 		}
 		if endsub {
 			text[len(text)-1], err = RReturnSubStr(endcmd, text[len(text)-1])
 			if err != nil {
-				return []string{}, err
+				return []TextAndID{}, err
 			}
 		}
 	}
-	return text, nil
+	selection := []TextAndID{}
+	for i := range text {
+		selection = append(selection, TextAndID{ID: extrID[i], Text: text[i]})
+	}
+	return selection, nil
 }
 
 func contains(s []string, e string) bool {
