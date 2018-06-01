@@ -511,6 +511,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
 		}
 	case true:
+		temp := id
 		start, end, err := findStartEnd(id)
 		firstid := start
 		lastid := end
@@ -530,7 +531,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: id, Text: p.Text.TXT}}, nil
+			return []TextAndID{TextAndID{ID: temp, Text: p.Text.TXT}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
