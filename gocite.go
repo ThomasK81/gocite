@@ -1,6 +1,8 @@
 package gocite
 
 import (
+	"errors"
+	"strconv"
 	"strings"
 )
 
@@ -59,7 +61,7 @@ type PassLoc struct {
 
 // EncText is a container for different encodings of the same textual information
 type EncText struct {
-	TXT, MarkDown, CEX, CSV, XML string
+	TXT, MarkDown, CEX, XML string
 }
 
 // SplitCTS splits a CTS URN in its stem and the passage reference
@@ -87,6 +89,11 @@ func IsRange(s string) bool {
 	default:
 		return false
 	}
+}
+
+// WantSubstr tests whether a the passage part of a URN refers to a substring
+func WantSubstr(s string) bool {
+	return strings.Contains(s, "@")
 }
 
 // IsCTSURN tests whether a string is a valid CTSURN
@@ -151,13 +158,13 @@ func IsExemplarID(s string) bool {
 }
 
 // GetPassageByID searches for an ID in a given work
-func GetPassageByID(id string, w Work) Passage {
+func GetPassageByID(id string, w Work) (Passage, error) {
 	for i := range w.Passages {
 		if w.Passages[i].PassageID == id {
-			return w.Passages[i]
+			return w.Passages[i], nil
 		}
 	}
-	return Passage{}
+	return Passage{}, errors.New("couldn't find passage")
 }
 
 // GetIndexByID searches for an ID in a given work and returns its Index
@@ -374,4 +381,223 @@ func InsertPassage(p Passage, w Work) Work {
 	}
 	w.Ordered = false
 	return w
+}
+
+// RReturnSubStr returns the substring identified by the reverse of @substr[n]. [n] is optional.
+func RReturnSubStr(cmd, s string) (string, error) {
+	newstr := ""
+	switch strings.Contains(cmd, "[") {
+	case false:
+		add, err := before(s, cmd)
+		if err != nil {
+			return "", err
+		}
+		newstr = add + cmd
+		return newstr, nil
+	case true:
+		cmdSl := strings.Split(cmd, "[")
+		if len(cmdSl) != 2 {
+			return s, errors.New("argument error")
+		}
+		cmdSl[1] = strings.Replace(cmdSl[1], "]", "", 1)
+		n, err := strconv.Atoi(cmdSl[1])
+		if err != nil {
+			return s, err
+		}
+		if strings.Count(s, cmdSl[0]) < n {
+			return s, errors.New("argument error")
+		}
+		strSl := strings.SplitN(s, cmdSl[0], n+1)
+		strSl = strSl[0:n]
+		newstr = strings.Join(strSl, cmdSl[0]) + cmdSl[0]
+	}
+	return newstr, nil
+}
+
+// ReturnSubStr returns the substring identified by @substr[n]. [n] is optional.
+func ReturnSubStr(cmd, s string) (string, error) {
+	newstr := ""
+	switch strings.Contains(cmd, "[") {
+	case false:
+		add, err := after(s, cmd)
+		if err != nil {
+			return "", err
+		}
+		newstr = cmd + add
+		return newstr, nil
+	case true:
+		cmdSl := strings.Split(cmd, "[")
+		if len(cmdSl) != 2 {
+			return s, errors.New("argument error")
+		}
+		cmdSl[1] = strings.Replace(cmdSl[1], "]", "", 1)
+		n, err := strconv.Atoi(cmdSl[1])
+		if err != nil {
+			return s, err
+		}
+		if strings.Count(s, cmdSl[0]) < n {
+			return s, errors.New("argument error")
+		}
+		strSl := strings.SplitN(s, cmdSl[0], n+1)
+		newstr = cmdSl[0] + strSl[n]
+	}
+	return newstr, nil
+}
+
+func after(value string, a string) (string, error) {
+	// Get substring after a string.
+	pos := strings.Index(value, a)
+	if pos == -1 {
+		return "", errors.New("substring not found")
+	}
+	adjustedPos := pos + len(a)
+	if adjustedPos >= len(value) {
+		return "", nil
+	}
+	return value[adjustedPos:len(value)], nil
+}
+
+func before(value string, a string) (string, error) {
+	// Get substring before a string.
+	pos := strings.Index(value, a)
+	if pos == -1 {
+		return "", errors.New("substring not found")
+	}
+	return value[0:pos], nil
+}
+
+// ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
+func ExtractTextByID(id string, w Work) ([]string, error) {
+	text := []string{}
+	startsub := false
+	endsub := false
+	startcmd := ""
+	endcmd := ""
+	if !IsCTSURN(id) {
+		return text, errors.New("urn is not a valid cts urn")
+	}
+	switch IsRange(id) {
+	case false:
+		switch WantSubstr(id) {
+		case false:
+			p, err := GetPassageByID(id, w)
+			if err != nil {
+				return []string{}, err
+			}
+			text = append(text, p.Text.TXT)
+		case true:
+			idSl := strings.Split(id, "@")
+			if len(idSl) != 2 {
+				return []string{}, errors.New("two many @")
+			}
+			p, err := GetPassageByID(idSl[0], w)
+			if err != nil {
+				return []string{}, err
+			}
+			txt := p.Text.TXT
+			txt, err = ReturnSubStr(idSl[1], txt)
+			if err != nil {
+				return []string{}, err
+			}
+			text = append(text, txt)
+		}
+	case true:
+		start, end, err := findStartEnd(id)
+		if err != nil {
+			return []string{}, err
+		}
+		if WantSubstr(start) {
+			idSl := strings.Split(start, "@")
+			if len(idSl) != 2 {
+				return []string{}, errors.New("two many @")
+			}
+			startsub = true
+			start = idSl[0]
+			startcmd = idSl[1]
+		}
+		if WantSubstr(end) {
+			idSl2 := strings.Split(end, "@")
+			if len(idSl2) != 2 {
+				return []string{}, errors.New("two many @")
+			}
+			endsub = true
+			end = idSl2[0]
+			endcmd = idSl2[1]
+		}
+		switch w.Ordered {
+		case true:
+			startindex, found := GetIndexByID(start, w)
+			endindex, found2 := GetIndexByID(end, w)
+			if !found || !found2 {
+				return []string{}, errors.New("passage not found")
+			}
+			for i := startindex; i < endindex+1; i++ {
+				text = append(text, w.Passages[i].Text.TXT)
+			}
+		case false:
+			_, found := GetIndexByID(start, w)
+			_, found2 := GetIndexByID(end, w)
+			if !found || !found2 {
+				return []string{}, errors.New("passage not found")
+			}
+			found = false
+			startID := start
+			IDsVisited := []string{}
+			for !found {
+				p, err := GetPassageByID(startID, w)
+				if err != nil {
+					return []string{}, errors.New("passage not found")
+				}
+				startID = p.Next.PassageID
+				if contains(IDsVisited, startID) {
+					return []string{}, errors.New("work is loopy")
+				}
+				IDsVisited = append(IDsVisited, startID)
+				if p.PassageID == end {
+					found = true
+				}
+				if p.PassageID != end && p.Next.Exists != true {
+					return []string{}, errors.New("unexpected end of work")
+				}
+				text = append(text, p.Text.TXT)
+			}
+		}
+		if startsub {
+			text[0], err = ReturnSubStr(startcmd, start)
+			if err != nil {
+				return []string{}, err
+			}
+		}
+		if endsub {
+			text[len(text)-1], err = RReturnSubStr(endcmd, end)
+			if err != nil {
+				return []string{}, err
+			}
+		}
+	}
+	return text, nil
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func findStartEnd(s string) (start, end string, err error) {
+	urn := SplitCTS(s)
+	if urn.InValid {
+		return "", "", errors.New("invalid urn")
+	}
+	passIDs := strings.Split(urn.Passage, "-")
+	if len(passIDs) != 2 {
+		return "", "", errors.New("invalid urn")
+	}
+	start = strings.Join([]string{urn.Base, urn.Protocol, urn.Namespace, urn.Work, passIDs[0]}, ":")
+	end = strings.Join([]string{urn.Base, urn.Protocol, urn.Namespace, urn.Work, passIDs[1]}, ":")
+	err = nil
+	return
 }
