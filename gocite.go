@@ -507,6 +507,9 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 				return []TextAndID{}, err
 			}
 			reg, err := regexp.Compile(`\[\d\]`)
+			if err != nil {
+				return []TextAndID{}, err
+			}
 			idSl[1] = reg.ReplaceAllString(idSl[1], "")
 			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
 		}
