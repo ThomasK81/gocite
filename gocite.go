@@ -2,6 +2,7 @@ package gocite
 
 import (
 	"errors"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -505,6 +506,8 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
+			reg, err := regexp.Compile(`\[\d\]`)
+			idSl[1] = reg.ReplaceAllString(idSl[1], "")
 			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
 		}
 	case true:
