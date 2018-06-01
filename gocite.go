@@ -448,7 +448,7 @@ func after(value string, a string) (string, error) {
 	// Get substring after a string.
 	pos := strings.Index(value, a)
 	if pos == -1 {
-		return "", errors.New(a + " not found")
+		return "", errors.New(a + " not found in " + value)
 	}
 	adjustedPos := pos + len(a)
 	if adjustedPos >= len(value) {
