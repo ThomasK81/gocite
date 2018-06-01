@@ -119,7 +119,7 @@ var testcorpus2 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
 		firstPassageChange,
-		gocite.Passage{},
+		{},
 		thirdPassageChange,
 	},
 	Ordered: false}
@@ -127,8 +127,8 @@ var testcorpus2 = gocite.Work{
 var testcorpus3 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassage.PassageID, Index: 0}},
+		{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}},
+		{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassage.PassageID, Index: 0}},
 	},
 	Ordered: true}
 
@@ -143,9 +143,9 @@ var testcorpus4 = gocite.Work{
 var testcorpus5 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
-		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
+		{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: firstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 1, First: firstPassageChange.First, Last: firstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
+		{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: thirdPassageChange.First, Last: thirdPassageChange.Last, Prev: thirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
 	},
 	Ordered: false,
 }
@@ -153,9 +153,9 @@ var testcorpus5 = gocite.Work{
 var testcorpus6 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 1}},
-		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 2, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 1}},
+		{PassageID: firstPassageChange.PassageID, Range: firstPassageChange.Range, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 1}},
+		{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
+		{PassageID: thirdPassageChange.PassageID, Range: thirdPassageChange.Range, Text: thirdPassageChange.Text, Index: 2, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 2}, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 1}},
 	},
 	Ordered: false,
 }
@@ -163,37 +163,37 @@ var testcorpus6 = gocite.Work{
 var testcorpus7 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: false, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: false, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
+		{PassageID: firstPassageChange.PassageID, Range: false, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassage.PassageID, Index: 1}},
+		{PassageID: thirdPassageChange.PassageID, Range: false, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}},
 	},
 	Ordered: true}
 
 var testcorpus8 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		gocite.Passage{PassageID: firstPassageChange.PassageID, Range: false, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		gocite.Passage{PassageID: thirdPassageChange.PassageID, Range: false, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
-		gocite.Passage{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}},
+		{PassageID: firstPassageChange.PassageID, Range: false, Text: firstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		{PassageID: thirdPassageChange.PassageID, Range: false, Text: thirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: secondPassage.PassageID, Index: 2}},
+		{PassageID: secondPassage.PassageID, Range: secondPassage.Range, Text: secondPassage.Text, Index: 2, First: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: firstPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: thirdPassageChange.PassageID, Index: 1}},
 	},
 	Ordered: false,
 }
 
 var tests3 = []testgroup{
-	testgroup{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
+	{inputcorpus: testcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", output: testcorpus2},
 }
 
 var tests4a = []testgroup{
-	testgroup{inputcorpus: testcorpus3, inputID: firstPassageChange.First.PassageID},
-	testgroup{inputcorpus: testcorpus5, inputID: firstPassageChange.First.PassageID},
+	{inputcorpus: testcorpus3, inputID: firstPassageChange.First.PassageID},
+	{inputcorpus: testcorpus5, inputID: firstPassageChange.First.PassageID},
 }
 
 var tests4 = []testgroup{
-	testgroup{inputcorpus: testcorpus2, output: testcorpus3},
-	testgroup{inputcorpus: testcorpus5, output: testcorpus6},
+	{inputcorpus: testcorpus2, output: testcorpus3},
+	{inputcorpus: testcorpus5, output: testcorpus6},
 }
 
 var tests5 = []testgroup{
-	testgroup{inputcorpus: testcorpus7, output: testcorpus8},
+	{inputcorpus: testcorpus7, output: testcorpus8},
 }
 
 func TestSplitCTS(t *testing.T) {
@@ -398,71 +398,71 @@ func TestExtractTextByID(t *testing.T) {
 }
 
 var extrtest = []extractgroup{
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1", Text: "This is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:1", Text: "This is is the first node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:2",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1-3",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1", Text: "This is is the first node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
+			{ID: "urn:cts:collection:workgroup.work:1", Text: "This is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:2-3",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is", Text: "is"},
+			{ID: "urn:cts:collection:workgroup.work:1@is", Text: "is"},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is[2]",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is"},
+			{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is"},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:2@is[2]-2@second",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2@is[2]-2@second", Text: "is. the second"},
+			{ID: "urn:cts:collection:workgroup.work:2@is[2]-2@second", Text: "is. the second"},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is-3",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is", Text: "is is is the first node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
+			{ID: "urn:cts:collection:workgroup.work:1@is", Text: "is is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is[2]-3",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
+			{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3", Text: "This is the third node."},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is[2]-3@third",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3@third", Text: "This is the third"},
+			{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3@third", Text: "This is the third"},
 		}},
-	extractgroup{
+	{
 		input: "urn:cts:collection:workgroup.work:1@is[2]-3@is[2]",
 		answer: []gocite.TextAndID{
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
-			gocite.TextAndID{ID: "urn:cts:collection:workgroup.work:3@is[2]", Text: "This is"},
+			{ID: "urn:cts:collection:workgroup.work:1@is[2]", Text: "is is the first node."},
+			{ID: "urn:cts:collection:workgroup.work:2", Text: "This is. the second. node."},
+			{ID: "urn:cts:collection:workgroup.work:3@is[2]", Text: "This is"},
 		}},
 }
 

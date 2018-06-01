@@ -460,7 +460,7 @@ func after(value string, a string) (string, error) {
 	if adjustedPos >= len(value) {
 		return "", nil
 	}
-	return value[adjustedPos:len(value)], nil
+	return value[adjustedPos:], nil
 }
 
 func before(value string, a string) (string, error) {
@@ -491,7 +491,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: id, Text: p.Text.TXT}}, nil
+			return []TextAndID{{ID: id, Text: p.Text.TXT}}, nil
 		case true:
 			idSl := strings.Split(id, "@")
 			if len(idSl) != 2 {
@@ -511,7 +511,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 				return []TextAndID{}, err
 			}
 			idSl[1] = reg.ReplaceAllString(idSl[1], "")
-			return []TextAndID{TextAndID{ID: id, Text: idSl[1]}}, nil
+			return []TextAndID{{ID: id, Text: idSl[1]}}, nil
 		}
 	case true:
 		start, end, err := findStartEnd(id)
@@ -535,7 +535,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: id, Text: p.Text.TXT}}, nil
+			return []TextAndID{{ID: id, Text: p.Text.TXT}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
