@@ -23,6 +23,11 @@ type testgroup struct {
 	output      gocite.Work
 }
 
+type extractgroup struct {
+	input  string
+	answer []string
+}
+
 var tests = []testpair{
 	{input: "urn:cts:collection:workgroup.work:1-27", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:1-27", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "1-27"}, outputRange: true, outputCTS: true},
 	{input: "urn:cts:collection:workgroup.work:27.3", outputSplit: gocite.CTSURN{ID: "urn:cts:collection:workgroup.work:27.3", Base: "urn", Protocol: "cts", Namespace: "collection", Work: "workgroup.work", Passage: "27.3"}, outputRange: false, outputCTS: true},
@@ -363,4 +368,92 @@ func TestInsertPassage(t *testing.T) {
 			)
 		}
 	}
+}
+
+func TestExtractTextByID(t *testing.T) {
+	for j := range extrtest {
+		request := extrtest[j].input
+		answer := extrtest[j].answer
+		v, _ := gocite.ExtractTextByID(request, testExtrcorpus)
+		if len(v) != len(answer) {
+			t.Error(
+				"For test", request,
+				"expected", len(answer),
+				"got", len(v),
+			)
+		}
+		for i := range v {
+			if v[i] != answer[i] {
+				t.Error(
+					"For test", request, "part", i,
+					"expected", answer,
+					"got", v,
+				)
+			}
+		}
+	}
+}
+
+var extrtest = []extractgroup{
+	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1",
+		answer: []string{
+			"This is is the first node.",
+		}},
+	extractgroup{
+		input: "urn:cts:collection:workgroup.work:1-3",
+		answer: []string{
+			"This is is the first node.",
+			"This is. the second. node.",
+			"This is the third node.",
+		}},
+}
+
+var testExtrcorpus = gocite.Work{
+	WorkID: "urn:cts:collection:workgroup.work:",
+	Passages: []gocite.Passage{
+		PassageOne,
+		PassageTwo,
+		PassageThree,
+	},
+	Ordered: true,
+}
+
+var PassageOne = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:1",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is is the first node.",
+	},
+	Index: 1,
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+}
+
+var PassageTwo = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:2",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is. the second. node.",
+	},
+	Index: 1,
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+}
+
+var PassageThree = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:3",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is the third node.",
+	},
+	Index: 1,
+	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:5", Index: 2},
 }
