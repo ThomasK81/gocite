@@ -530,7 +530,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{TextAndID{ID: "what", Text: p.Text.TXT}}, nil
+			return []TextAndID{TextAndID{Text: "hallo!"}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
