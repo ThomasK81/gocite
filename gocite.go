@@ -85,6 +85,21 @@ func SplitCTS(s string) CTSURN {
 		InValid:   false}
 }
 
+// SplitCITE splits a Cite URN in its stem and the passage reference
+func SplitCITE(s string) Cite2Urn {
+	if !IsCITEURN(s) {
+		return Cite2Urn{ID: s, InValid: true}
+	}
+	comps := strings.Split(s, ":")
+	return Cite2Urn{ID: s,
+		Base:       comps[0],
+		Protocol:   comps[1],
+		Namespace:  comps[2],
+		Collection: comps[3],
+		Object:     comps[4],
+		InValid:    false}
+}
+
 // IsRange is a function that returns a boolean whether a CTS URN is a range
 func IsRange(s string) bool {
 	switch {
