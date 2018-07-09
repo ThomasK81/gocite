@@ -106,13 +106,26 @@ func WantSubstr(s string) bool {
 func IsCTSURN(s string) bool {
 	test := strings.Split(s, ":")
 	switch {
-	case len(test) < 4:
-		return false
-	case len(test) > 5:
+	case len(test) != 5:
 		return false
 	case test[0] != "urn":
 		return false
 	case test[1] != "cts":
+		return false
+	default:
+		return true
+	}
+}
+
+// IsCITEURN tests whether a string is a valid CITE URN
+func IsCITEURN(s string) bool {
+	test := strings.Split(s, ":")
+	switch {
+	case len(test) != 5:
+		return false
+	case test[0] != "urn":
+		return false
+	case test[1] != "cite2":
 		return false
 	default:
 		return true
