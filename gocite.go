@@ -25,9 +25,9 @@ type CTSURN struct {
 	InValid                                      bool
 }
 
-// Triple is a Simple LinkedData-Triple implementation, possible type assertion at a later stage
+// Triple is a Simple LinkedData-Triple implementation
 type Triple struct {
-	subject, verb, object interface{}
+	Subject, Verb, Object string
 }
 
 // Textgroup is a collection of works
@@ -50,6 +50,7 @@ type Passage struct {
 	Text                    EncText
 	Index                   int
 	First, Last, Prev, Next PassLoc
+	ImageLinks              []Triple
 }
 
 // PassLoc is a container for the ID and
@@ -67,7 +68,7 @@ type TextAndID struct {
 
 // EncText is a container for different encodings of the same textual information
 type EncText struct {
-	TXT, MarkDown, CEX, XML string
+	TXT, Brucheion, MarkDown, CEX, XML, Diplomatic, Normalised string
 }
 
 // SplitCTS splits a CTS URN in its stem and the passage reference
