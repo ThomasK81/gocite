@@ -6,6 +6,20 @@ import (
 	"github.com/ThomasK81/gocite"
 )
 
+type testPassage struct {
+	PassageID               string
+	Range                   bool
+	Text                    gocite.EncText
+	Index                   int
+	First, Last, Prev, Next gocite.PassLoc
+}
+
+type testWork struct {
+	WorkID   string
+	Passages []testPassage
+	Ordered  bool
+}
+
 type testpair struct {
 	input                  string
 	outputSplit            gocite.CTSURN
@@ -290,7 +304,9 @@ func TestIsExemplarID(t *testing.T) {
 func TestDelPassage(t *testing.T) {
 	for _, pair := range tests3 {
 		v := gocite.DelPassage(pair.inputID, pair.inputcorpus)
-		if v.Ordered == pair.inputcorpus.Ordered {
+		baseWork := testWork{Ordered: v.Ordered}
+		compareWork := testWork{Ordered: pair.inputcorpus.Ordered}
+		if baseWork.Ordered == compareWork.Ordered {
 			t.Error(
 				"For deleting", pair.inputID,
 				"expected", !pair.inputcorpus.Ordered,
@@ -298,7 +314,23 @@ func TestDelPassage(t *testing.T) {
 			)
 		}
 		for i := range v.Passages {
-			if v.Passages[i] != pair.output.Passages[i] {
+			basePassage := testPassage{PassageID: v.Passages[i].PassageID,
+				Range: v.Passages[i].Range,
+				Text:  v.Passages[i].Text,
+				Index: v.Passages[i].Index,
+				First: v.Passages[i].First,
+				Last:  v.Passages[i].Last,
+				Prev:  v.Passages[i].Prev,
+				Next:  v.Passages[i].Next}
+			comparePassage := testPassage{PassageID: pair.output.Passages[i].PassageID,
+				Range: pair.output.Passages[i].Range,
+				Text:  pair.output.Passages[i].Text,
+				Index: pair.output.Passages[i].Index,
+				First: pair.output.Passages[i].First,
+				Last:  pair.output.Passages[i].Last,
+				Prev:  pair.output.Passages[i].Prev,
+				Next:  pair.output.Passages[i].Next}
+			if basePassage != comparePassage {
 				t.Error(
 					"For deleting", pair.inputID,
 					"expected", pair.output.Passages[i],
@@ -340,7 +372,23 @@ func TestSortPassages(t *testing.T) {
 			)
 		}
 		for i := range v.Passages {
-			if v.Passages[i] != pair.output.Passages[i] {
+			basePassage := testPassage{PassageID: v.Passages[i].PassageID,
+				Range: v.Passages[i].Range,
+				Text:  v.Passages[i].Text,
+				Index: v.Passages[i].Index,
+				First: v.Passages[i].First,
+				Last:  v.Passages[i].Last,
+				Prev:  v.Passages[i].Prev,
+				Next:  v.Passages[i].Next}
+			comparePassage := testPassage{PassageID: pair.output.Passages[i].PassageID,
+				Range: pair.output.Passages[i].Range,
+				Text:  pair.output.Passages[i].Text,
+				Index: pair.output.Passages[i].Index,
+				First: pair.output.Passages[i].First,
+				Last:  pair.output.Passages[i].Last,
+				Prev:  pair.output.Passages[i].Prev,
+				Next:  pair.output.Passages[i].Next}
+			if basePassage != comparePassage {
 				t.Error(
 					"For test ", j, i,
 					"expected", pair.output.Passages[i],
