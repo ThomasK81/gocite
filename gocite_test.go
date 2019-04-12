@@ -408,7 +408,23 @@ func TestInsertPassage(t *testing.T) {
 		)
 	}
 	for i := range v.Passages {
-		if v.Passages[i] != tests5[0].output.Passages[i] {
+		basePassage := testPassage{PassageID: v.Passages[i].PassageID,
+			Range: v.Passages[i].Range,
+			Text:  v.Passages[i].Text,
+			Index: v.Passages[i].Index,
+			First: v.Passages[i].First,
+			Last:  v.Passages[i].Last,
+			Prev:  v.Passages[i].Prev,
+			Next:  v.Passages[i].Next}
+		comparePassage := testPassage{PassageID: tests5[0].output.Passages[i].PassageID,
+			Range: tests5[0].output.Passages[i].Range,
+			Text:  tests5[0].output.Passages[i].Text,
+			Index: tests5[0].output.Passages[i].Index,
+			First: tests5[0].output.Passages[i].First,
+			Last:  tests5[0].output.Passages[i].Last,
+			Prev:  tests5[0].output.Passages[i].Prev,
+			Next:  tests5[0].output.Passages[i].Next}
+		if basePassage != comparePassage {
 			t.Error(
 				"For test", i,
 				"expected", tests5[0].output.Passages[i],
