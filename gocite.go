@@ -12,14 +12,14 @@ type CiteVerb struct {
 	ID, Summary, Subject, Object, InverseID string
 }
 
-// Cite2Urn implemented as outlined here http://cite-architecture.github.io/2017/02/02/cite2urn_update/
+// Cite2Urn implemented as outlined here http://cite-architecture.org/cite2urn/
 type Cite2Urn struct {
 	ID, Base, Protocol, Namespace, Collection, Object string
 	InValid                                           bool
 }
 
-// CTSURN references text as explained in http://cite-architecture.github.io
-// For a note on CTS citations see https://github.com/cite-architecture/ctsurn_spec/blob/master/md/specification.md
+// CTSURN references text as explained in http://cite-architecture.org/ctsurn/
+// For a note on CTS citations see http://cite-architecture.github.io/cts_spec/
 type CTSURN struct {
 	ID, Base, Protocol, Namespace, Work, Passage string
 	InValid                                      bool
