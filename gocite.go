@@ -71,13 +71,14 @@ type EncText struct {
 	TXT, Brucheion, MarkDown, CEX, XML, Diplomatic, Normalised string
 }
 
-// SplitCTS splits a CTS URN in its stem and the passage reference
-func SplitCTS(s string) CTSURN {
-	if !IsCTSURN(s) {
-		return CTSURN{ID: s, InValid: true}
+// SplitCTS splits a CTS URN string in its stem and the passage reference
+//and returns it as a CTSURN
+func SplitCTS(URNString string) CTSURN {
+	if !IsCTSURN(URNString) {
+		return CTSURN{ID: URNString, InValid: true}
 	}
-	comps := strings.Split(s, ":")
-	return CTSURN{ID: s,
+	comps := strings.Split(URNString, ":")
+	return CTSURN{ID: URNString,
 		Base:      comps[0],
 		Protocol:  comps[1],
 		Namespace: comps[2],
@@ -86,13 +87,14 @@ func SplitCTS(s string) CTSURN {
 		InValid:   false}
 }
 
-// SplitCITE splits a Cite URN in its stem and the passage reference
-func SplitCITE(s string) Cite2Urn {
-	if !IsCITEURN(s) {
-		return Cite2Urn{ID: s, InValid: true}
+// SplitCITE splits a Cite URN string in its stem and the passage reference
+//and returns it as a Cite2Urn
+func SplitCITE(URNString string) Cite2Urn {
+	if !IsCITEURN(URNString) {
+		return Cite2Urn{ID: URNString, InValid: true}
 	}
-	comps := strings.Split(s, ":")
-	return Cite2Urn{ID: s,
+	comps := strings.Split(URNString, ":")
+	return Cite2Urn{ID: URNString,
 		Base:       comps[0],
 		Protocol:   comps[1],
 		Namespace:  comps[2],
@@ -101,26 +103,26 @@ func SplitCITE(s string) Cite2Urn {
 		InValid:    false}
 }
 
-// IsRange is a function that returns a boolean whether a CTS URN is a range
-func IsRange(s string) bool {
+// IsRange returns a boolean whether a CTS URN string is a range
+func IsRange(URNString string) bool {
 	switch {
-	case len(strings.Split(s, ":")) < 5:
+	case len(strings.Split(URNString, ":")) < 5:
 		return false
-	case strings.Contains(strings.Split(s, ":")[4], "-"):
+	case strings.Contains(strings.Split(URNString, ":")[4], "-"):
 		return true
 	default:
 		return false
 	}
 }
 
-// WantSubstr tests whether a the passage part of a URN refers to a substring
-func WantSubstr(s string) bool {
-	return strings.Contains(s, "@")
+// WantSubstr tests whether a the passage part of a URN string refers to a substring
+func WantSubstr(URNString string) bool {
+	return strings.Contains(URNString, "@")
 }
 
 // IsCTSURN tests whether a string is a valid CTSURN
-func IsCTSURN(s string) bool {
-	test := strings.Split(s, ":")
+func IsCTSURN(URNString string) bool {
+	test := strings.Split(URNString, ":")
 	switch {
 	case len(test) != 5:
 		return false
@@ -134,8 +136,8 @@ func IsCTSURN(s string) bool {
 }
 
 // IsCITEURN tests whether a string is a valid CITE URN
-func IsCITEURN(s string) bool {
-	test := strings.Split(s, ":")
+func IsCITEURN(URNString string) bool {
+	test := strings.Split(URNString, ":")
 	switch {
 	case len(test) != 5:
 		return false
@@ -148,220 +150,220 @@ func IsCITEURN(s string) bool {
 	}
 }
 
-// IsTextgroupID tests whether the CTSURN points to the textgroup level
-func IsTextgroupID(s string) bool {
-	if !IsCTSURN(s) {
+// IsTextgroupID tests whether a CTSURN (string) points to the textgroup level
+func IsTextgroupID(URNString string) bool {
+	if !IsCTSURN(URNString) {
 		return false
 	}
-	if len(strings.Split(SplitCTS(s).Work, ".")) != 1 {
-		return false
-	}
-	return true
-}
-
-// IsWorkID tests whether the CTSURN points to the textgroup level
-func IsWorkID(s string) bool {
-	if !IsCTSURN(s) {
-		return false
-	}
-	if len(strings.Split(SplitCTS(s).Work, ".")) != 2 {
+	if len(strings.Split(SplitCTS(URNString).Work, ".")) != 1 {
 		return false
 	}
 	return true
 }
 
-// IsVersionID tests whether the CTSURN points to the textgroup level
-func IsVersionID(s string) bool {
-	if !IsCTSURN(s) {
+// IsWorkID tests whether a CTSURN (string) points to the textgroup level
+func IsWorkID(URNString string) bool {
+	if !IsCTSURN(URNString) {
 		return false
 	}
-	if len(strings.Split(SplitCTS(s).Work, ".")) != 3 {
+	if len(strings.Split(SplitCTS(URNString).Work, ".")) != 2 {
 		return false
 	}
 	return true
 }
 
-// IsExemplarID tests whether the CTSURN points to the textgroup level
-func IsExemplarID(s string) bool {
-	if !IsCTSURN(s) {
+// IsVersionID tests whether a CTSURN (string) points to the textgroup level
+func IsVersionID(URNString string) bool {
+	if !IsCTSURN(URNString) {
 		return false
 	}
-	if len(strings.Split(SplitCTS(s).Work, ".")) != 4 {
+	if len(strings.Split(SplitCTS(URNString).Work, ".")) != 3 {
+		return false
+	}
+	return true
+}
+
+// IsExemplarID tests whether a CTSURN (string) points to the textgroup level
+func IsExemplarID(URNString string) bool {
+	if !IsCTSURN(URNString) {
+		return false
+	}
+	if len(strings.Split(SplitCTS(URNString).Work, ".")) != 4 {
 		return false
 	}
 	return true
 }
 
 // GetPassageByID searches for an ID in a given work
-func GetPassageByID(id string, w Work) (Passage, error) {
-	for i := range w.Passages {
-		if w.Passages[i].PassageID == id {
-			return w.Passages[i], nil
+func GetPassageByID(id string, work Work) (Passage, error) {
+	for i := range work.Passages {
+		if work.Passages[i].PassageID == id {
+			return work.Passages[i], nil
 		}
 	}
 	return Passage{}, errors.New("couldn't find passage")
 }
 
-// GetIndexByID searches for an ID in a given work and returns its Index
-// It also returns a bool whether it has found the Passage
-func GetIndexByID(id string, w Work) (int, bool) {
-	for i := range w.Passages {
-		if w.Passages[i].PassageID == id {
-			return i, true
+// GetIndexByID searches for an ID in a given work and if found, returns its Index
+// along with a bool indicating whether it has found the Passage
+func GetIndexByID(id string, work Work) (int, bool) {
+	for index := range work.Passages {
+		if work.Passages[index].PassageID == id {
+			return index, true
 		}
 	}
 	return 0, false
 }
 
-// GetPassageByInd returns Passage, given an Index and a Work
-func GetPassageByInd(i int, w Work) Passage {
-	return w.Passages[i]
+// GetPassageByInd returns a Passage, given an Index and a Work
+func GetPassageByInd(index int, work Work) Passage {
+	return work.Passages[index]
 }
 
 // GetLast returns the last Passage given a Work
-func GetLast(w Work) Passage {
-	return w.Passages[len(w.Passages)-1]
+func GetLast(work Work) Passage {
+	return work.Passages[len(work.Passages)-1]
 }
 
-// GetFirst returns the last Passage given a Work
-func GetFirst(w Work) Passage {
-	return w.Passages[0]
+// GetFirst returns the first Passage given a Work
+func GetFirst(work Work) Passage {
+	return work.Passages[0]
 }
 
 // GetNext returns the next Passage given a Work and a PassageID
-func GetNext(id string, w Work) Passage {
-	for i := range w.Passages {
-		if w.Passages[i].PassageID == id {
-			return w.Passages[w.Passages[i].Prev.Index]
+func GetNext(id string, work Work) Passage {
+	for i := range work.Passages {
+		if work.Passages[i].PassageID == id {
+			return work.Passages[work.Passages[i].Prev.Index]
 		}
 	}
 	return Passage{}
 }
 
 // GetPrev returns the previous Passage given a Work and a PassageID
-func GetPrev(id string, w Work) Passage {
-	for i := range w.Passages {
-		if w.Passages[i].PassageID == id {
-			return w.Passages[w.Passages[i].Prev.Index]
+func GetPrev(id string, work Work) Passage {
+	for i := range work.Passages {
+		if work.Passages[i].PassageID == id {
+			return work.Passages[work.Passages[i].Prev.Index]
 		}
 	}
 	return Passage{}
 }
 
-// DelPassage deletes a Passage from a work by changing the references
-func DelPassage(id string, w Work) Work {
-	if len(w.Passages) == 0 {
-		return w
+// DelPassage deletes a Passage from a Work by changing the references
+func DelPassage(id string, work Work) Work {
+	if len(work.Passages) == 0 {
+		return work
 	}
-	index, found := GetIndexByID(id, w)
+	index, found := GetIndexByID(id, work)
 	if !found {
-		return w
+		return work
 	}
-	passage := GetPassageByInd(index, w)
+	passage := GetPassageByInd(index, work)
 	switch {
-	case !w.Passages[index].Prev.Exists && !w.Passages[index].Next.Exists:
-		temp := Work{WorkID: w.WorkID, Ordered: true}
+	case !work.Passages[index].Prev.Exists && !work.Passages[index].Next.Exists:
+		temp := Work{WorkID: work.WorkID, Ordered: true}
 		return temp
-	case !w.Passages[index].Prev.Exists:
-		w := DelFirstPassage(w)
-		return w
-	case !w.Passages[index].Next.Exists:
-		w := DelLastPassage(w)
-		return w
+	case !work.Passages[index].Prev.Exists:
+		work := DelFirstPassage(work)
+		return work
+	case !work.Passages[index].Next.Exists:
+		work := DelLastPassage(work)
+		return work
 	default:
 		prevInd := passage.Prev.Index
 		nextInd := passage.Next.Index
-		w.Passages[prevInd].Next = passage.Next
-		w.Passages[nextInd].Prev = passage.Prev
-		w.Passages[index] = Passage{}
-		w.Ordered = false
+		work.Passages[prevInd].Next = passage.Next
+		work.Passages[nextInd].Prev = passage.Prev
+		work.Passages[index] = Passage{}
+		work.Ordered = false
 	}
-	return w
+	return work
 }
 
-// DelFirstPassage deletes the first Passage from a work by changing the references
-func DelFirstPassage(w Work) Work {
-	if len(w.Passages) == 0 {
-		return w
+// DelFirstPassage deletes the first Passage from a Work by changing the references
+func DelFirstPassage(work Work) Work {
+	if len(work.Passages) == 0 {
+		return work
 	}
-	passageIndex, found := FindFirstIndex(w)
+	passageIndex, found := FindFirstIndex(work)
 	if !found {
-		return w
+		return work
 	}
-	newFirst := w.Passages[passageIndex].Next
-	for i := range w.Passages {
-		w.Passages[i].First = newFirst
+	newFirst := work.Passages[passageIndex].Next
+	for i := range work.Passages {
+		work.Passages[i].First = newFirst
 	}
-	w.Passages[newFirst.Index].Prev = PassLoc{}
-	w.Passages[passageIndex] = Passage{}
-	return w
+	work.Passages[newFirst.Index].Prev = PassLoc{}
+	work.Passages[passageIndex] = Passage{}
+	return work
 }
 
-// DelLastPassage deletes the last Passage from a work by changing the references
-func DelLastPassage(w Work) Work {
-	if len(w.Passages) == 0 {
-		return w
+// DelLastPassage deletes the last Passage from a Work by changing the references
+func DelLastPassage(work Work) Work {
+	if len(work.Passages) == 0 {
+		return work
 	}
-	passageIndex, found := FindLastIndex(w)
+	passageIndex, found := FindLastIndex(work)
 	if !found {
-		return w
+		return work
 	}
-	newLast := w.Passages[passageIndex].Prev
-	for i := range w.Passages {
-		w.Passages[i].Last = newLast
+	newLast := work.Passages[passageIndex].Prev
+	for i := range work.Passages {
+		work.Passages[i].Last = newLast
 	}
-	w.Passages[newLast.Index].Next = PassLoc{}
-	w.Passages[passageIndex] = Passage{}
-	return w
+	work.Passages[newLast.Index].Next = PassLoc{}
+	work.Passages[passageIndex] = Passage{}
+	return work
 }
 
 // FindFirstIndex returns the first Index of the Passages in a Work.
 // It also returns a bool whether it has found one.
-func FindFirstIndex(w Work) (int, bool) {
-	for i := range w.Passages {
-		if w.Passages[i].First.Exists {
-			return w.Passages[i].First.Index, true
+func FindFirstIndex(work Work) (int, bool) {
+	for i := range work.Passages {
+		if work.Passages[i].First.Exists {
+			return work.Passages[i].First.Index, true
 		}
 	}
 	return 0, false
 }
 
-// FindLastIndex returns the first Index of the Passages in a Work.
-// It also returns a bool whether it has found one.
-func FindLastIndex(w Work) (int, bool) {
-	for i := range w.Passages {
-		if w.Passages[i].Last.Exists {
-			return w.Passages[i].Last.Index, true
+// FindLastIndex returns the last index of the Passages in a Work
+// along with a bool whether it has found one.
+func FindLastIndex(work Work) (int, bool) {
+	for i := range work.Passages {
+		if work.Passages[i].Last.Exists {
+			return work.Passages[i].Last.Index, true
 		}
 	}
 	return 0, false
 }
 
 // SortPassages sorts the Passages in a Work from First to Last, empty Passages are being deleted
-func SortPassages(w Work) Work {
-	if len(w.Passages) == 0 {
-		return w
+func SortPassages(work Work) Work {
+	if len(work.Passages) == 0 {
+		return work
 	}
-	cursor, found := FindFirstIndex(w)
+	cursor, found := FindFirstIndex(work)
 	if !found {
-		return w
+		return work
 	}
-	result := Work{WorkID: w.WorkID, Ordered: true}
+	result := Work{WorkID: work.WorkID, Ordered: true}
 	index := 0
 	last := false
 	for !last {
-		temp := w.Passages[cursor]
+		temp := work.Passages[cursor]
 		temp.Index = index
 		temp.First.Index = 0
 		if index != 0 {
 			temp.Prev.Index = index - 1
 		}
-		if w.Passages[cursor].PassageID == w.Passages[cursor].Last.PassageID {
+		if work.Passages[cursor].PassageID == work.Passages[cursor].Last.PassageID {
 			last = true
 		}
 		if last == false {
 			temp.Next.Index = index + 1
-			cursor = w.Passages[cursor].Next.Index
+			cursor = work.Passages[cursor].Next.Index
 			index++
 		}
 		result.Passages = append(result.Passages, temp)
@@ -373,49 +375,49 @@ func SortPassages(w Work) Work {
 }
 
 // InsertPassage inserts a Passage into a Work
-func InsertPassage(p Passage, w Work) Work {
-	if len(w.Passages) == 0 {
-		p.First = PassLoc{Exists: true, PassageID: p.PassageID, Index: 0}
-		p.Last = PassLoc{Exists: true, PassageID: p.PassageID, Index: 0}
-		p.Next = PassLoc{}
-		p.Prev = PassLoc{}
-		w.Passages = append(w.Passages, p)
-		return w
+func InsertPassage(passage Passage, work Work) Work {
+	if len(work.Passages) == 0 {
+		passage.First = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
+		passage.Last = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
+		passage.Next = PassLoc{}
+		passage.Prev = PassLoc{}
+		work.Passages = append(work.Passages, passage)
+		return work
 	}
-	nextIndex, nextExists := GetIndexByID(p.Next.PassageID, w)
-	prevIndex, prevExists := GetIndexByID(p.Prev.PassageID, w)
-	firstIndex, _ := FindFirstIndex(w)
-	lastIndex, _ := FindLastIndex(w)
-	passloc := PassLoc{Exists: true, PassageID: p.PassageID, Index: len(w.Passages)}
-	p.First = PassLoc{Exists: true, PassageID: w.Passages[firstIndex].PassageID, Index: firstIndex}
-	p.Last = PassLoc{Exists: true, PassageID: w.Passages[lastIndex].PassageID, Index: lastIndex}
+	nextIndex, nextExists := GetIndexByID(passage.Next.PassageID, work)
+	prevIndex, prevExists := GetIndexByID(passage.Prev.PassageID, work)
+	firstIndex, _ := FindFirstIndex(work)
+	lastIndex, _ := FindLastIndex(work)
+	passloc := PassLoc{Exists: true, PassageID: passage.PassageID, Index: len(work.Passages)}
+	passage.First = PassLoc{Exists: true, PassageID: work.Passages[firstIndex].PassageID, Index: firstIndex}
+	passage.Last = PassLoc{Exists: true, PassageID: work.Passages[lastIndex].PassageID, Index: lastIndex}
 	switch {
 	case !nextExists && prevExists:
-		p.Next = PassLoc{}
-		p.Prev = PassLoc{Exists: true, PassageID: w.Passages[prevIndex].PassageID, Index: prevIndex}
-		w.Passages = append(w.Passages, p)
-		w.Passages[prevIndex].Next = passloc
-		for i := range w.Passages {
-			w.Passages[i].Last = passloc
+		passage.Next = PassLoc{}
+		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
+		work.Passages = append(work.Passages, passage)
+		work.Passages[prevIndex].Next = passloc
+		for i := range work.Passages {
+			work.Passages[i].Last = passloc
 		}
 	case nextExists && !prevExists:
-		p.Prev = PassLoc{}
-		p.Next = PassLoc{Exists: true, PassageID: w.Passages[nextIndex].PassageID, Index: nextIndex}
-		w.Passages = append(w.Passages, p)
-		w.Passages[nextIndex].Prev = passloc
-		for i := range w.Passages {
-			w.Passages[i].First = passloc
+		passage.Prev = PassLoc{}
+		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
+		work.Passages = append(work.Passages, passage)
+		work.Passages[nextIndex].Prev = passloc
+		for i := range work.Passages {
+			work.Passages[i].First = passloc
 		}
 	default:
-		p.Next = PassLoc{Exists: true, PassageID: w.Passages[nextIndex].PassageID, Index: nextIndex}
-		p.Prev = PassLoc{Exists: true, PassageID: w.Passages[prevIndex].PassageID, Index: prevIndex}
-		w.Passages = append(w.Passages, p)
-		w.Passages[prevIndex].Next = passloc
-		w.Passages[nextIndex].Prev = passloc
-		w.Passages[len(w.Passages)-1].Index = len(w.Passages) - 1
+		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
+		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
+		work.Passages = append(work.Passages, passage)
+		work.Passages[prevIndex].Next = passloc
+		work.Passages[nextIndex].Prev = passloc
+		work.Passages[len(work.Passages)-1].Index = len(work.Passages) - 1
 	}
-	w.Ordered = false
-	return w
+	work.Ordered = false
+	return work
 }
 
 // RReturnSubStr returns the substring identified by the reverse of @substr[n]. [n] is optional.
@@ -502,7 +504,7 @@ func before(value string, a string) (string, error) {
 }
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
-func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
+func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
 	text := []string{}
 	extrID := []string{}
 	startsub := false
@@ -516,7 +518,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 	case false:
 		switch WantSubstr(id) {
 		case false:
-			p, err := GetPassageByID(id, w)
+			p, err := GetPassageByID(id, work)
 			if err != nil {
 				return []TextAndID{}, err
 			}
@@ -526,7 +528,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if len(idSl) != 2 {
 				return []TextAndID{}, errors.New("two many @")
 			}
-			p, err := GetPassageByID(idSl[0], w)
+			p, err := GetPassageByID(idSl[0], work)
 			if err != nil {
 				return []TextAndID{}, err
 			}
@@ -552,7 +554,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			if !WantSubstr(start) || !WantSubstr(end) {
 				return []TextAndID{}, errors.New("substringing in the same line has the format 1@start-1@end")
 			}
-			p, err := GetPassageByID(startRoot[0], w)
+			p, err := GetPassageByID(startRoot[0], work)
 			if err != nil {
 				return []TextAndID{}, err
 			}
@@ -587,10 +589,10 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			end = idSl2[0]
 			endcmd = idSl2[1]
 		}
-		switch w.Ordered {
+		switch work.Ordered {
 		case true:
-			startindex, found := GetIndexByID(start, w)
-			endindex, found2 := GetIndexByID(end, w)
+			startindex, found := GetIndexByID(start, work)
+			endindex, found2 := GetIndexByID(end, work)
 			if !found || !found2 {
 				return []TextAndID{}, errors.New("passage not found")
 			}
@@ -601,13 +603,13 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 				case endindex:
 					extrID = append(extrID, lastid)
 				default:
-					extrID = append(extrID, w.Passages[i].PassageID)
+					extrID = append(extrID, work.Passages[i].PassageID)
 				}
-				text = append(text, w.Passages[i].Text.TXT)
+				text = append(text, work.Passages[i].Text.TXT)
 			}
 		case false:
-			_, found := GetIndexByID(start, w)
-			_, found2 := GetIndexByID(end, w)
+			_, found := GetIndexByID(start, work)
+			_, found2 := GetIndexByID(end, work)
 			if !found || !found2 {
 				return []TextAndID{}, errors.New("passage not found")
 			}
@@ -615,7 +617,7 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 			startID := start
 			IDsVisited := []string{}
 			for !found {
-				p, err := GetPassageByID(startID, w)
+				p, err := GetPassageByID(startID, work)
 				switch startID {
 				case start:
 					extrID = append(extrID, firstid)
@@ -661,17 +663,18 @@ func ExtractTextByID(id string, w Work) ([]TextAndID, error) {
 	return selection, nil
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
+//contains returns true if the 'needle' string is found in the 'heystack' string slice
+func contains(heystack []string, needle string) bool {
+	for _, straw := range heystack {
+		if straw == needle {
 			return true
 		}
 	}
 	return false
 }
 
-func findStartEnd(s string) (start, end string, err error) {
-	urn := SplitCTS(s)
+func findStartEnd(URNString string) (start, end string, err error) {
+	urn := SplitCTS(URNString)
 	if urn.InValid {
 		return "", "", errors.New("invalid urn")
 	}
