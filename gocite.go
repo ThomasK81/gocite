@@ -223,7 +223,7 @@ func GetPassageByInd(sliceIndex int, work Work) Passage {
 }
 
 // GetLast returns the Passage that appears to be the last in the passage slice in a given a Work
-//(not the one saved as Passage.First)
+//(not the one saved as Passage.Last)
 func GetLast(work Work) Passage {
 	return work.Passages[len(work.Passages)-1]
 }
