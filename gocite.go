@@ -383,8 +383,6 @@ func SortPassages(work Work) Work {
 
 // InsertPassage inserts a Passage into a Work
 func InsertPassage(passage Passage, work Work) Work {
-	//if this is a new work, then the passage is the first and last work, and there is no next and previous work.
-	//simply add the new passage to the work
 	if len(work.Passages) == 0 {
 		passage.First = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
 		passage.Last = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
