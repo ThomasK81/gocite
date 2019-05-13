@@ -161,7 +161,7 @@ func IsTextgroupID(URNString string) bool {
 	return true
 }
 
-// IsWorkID tests whether a CTSURN (string) points to the textgroup level
+// IsWorkID tests whether a CTSURN (string) points to the work level
 func IsWorkID(URNString string) bool {
 	if !IsCTSURN(URNString) {
 		return false
@@ -172,7 +172,7 @@ func IsWorkID(URNString string) bool {
 	return true
 }
 
-// IsVersionID tests whether a CTSURN (string) points to the textgroup level
+// IsVersionID tests whether a CTSURN (string) points to the version level
 func IsVersionID(URNString string) bool {
 	if !IsCTSURN(URNString) {
 		return false
@@ -183,7 +183,7 @@ func IsVersionID(URNString string) bool {
 	return true
 }
 
-// IsExemplarID tests whether a CTSURN (string) points to the textgroup level
+// IsExemplarID tests whether a CTSURN (string) points to the exemplar level
 func IsExemplarID(URNString string) bool {
 	if !IsCTSURN(URNString) {
 		return false
@@ -247,9 +247,9 @@ func GetNext(passageID string, work Work) Passage {
 
 // GetPrev returns the Passage previous to the given the PassageID in given a Work
 //(not the next in the work.Passages slice)
-func GetPrev(id string, work Work) Passage {
+func GetPrev(passageID string, work Work) Passage {
 	for i := range work.Passages {
-		if work.Passages[i].PassageID == id {
+		if work.Passages[i].PassageID == passageID {
 			return work.Passages[work.Passages[i].Prev.Index]
 		}
 	}
@@ -324,8 +324,8 @@ func DelLastPassage(work Work) Work {
 }
 
 // GetFirstIndex returns the Passage.First.Index of the first Passage in a Work
-// that has Passage.First.Index.Exists set to true,
-// along with a bool whether one was saved.
+//that has Passage.First.Index.Exists set to true,
+//along with a bool whether it has found that index.
 func GetFirstIndex(work Work) (int, bool) {
 	for i := range work.Passages {
 		if work.Passages[i].First.Exists {
@@ -335,8 +335,9 @@ func GetFirstIndex(work Work) (int, bool) {
 	return 0, false
 }
 
-// GetLastIndex returns the last index of the Passages in a Work
-// along with a bool whether it has found one.
+// GetLastIndex returns the Passage.Last.Index of the first Passage in a Work
+//that has Passage.Last.Index.Exists set to true,
+//along with a bool whether it has found that index.
 func GetLastIndex(work Work) (int, bool) {
 	for i := range work.Passages {
 		if work.Passages[i].Last.Exists {
@@ -346,7 +347,9 @@ func GetLastIndex(work Work) (int, bool) {
 	return 0, false
 }
 
-// SortPassages sorts the Passages in a Work from First to Last, empty Passages are being deleted
+// SortPassages sorts the Passages in the Work.Passages slice from First to Last
+//according to their Passage.Index values
+//empty Passages are not being appended
 func SortPassages(work Work) Work {
 	if len(work.Passages) == 0 {
 		return work
@@ -383,7 +386,7 @@ func SortPassages(work Work) Work {
 
 // InsertPassage inserts a Passage into a Work
 func InsertPassage(passage Passage, work Work) Work {
-	if len(work.Passages) == 0 {
+	if len(work.Passages) == 0 { //if the work has no passages yet
 		passage.First = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
 		passage.Last = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
 		passage.Next = PassLoc{}
@@ -399,15 +402,15 @@ func InsertPassage(passage Passage, work Work) Work {
 	passage.First = PassLoc{Exists: true, PassageID: work.Passages[firstIndex].PassageID, Index: firstIndex}
 	passage.Last = PassLoc{Exists: true, PassageID: work.Passages[lastIndex].PassageID, Index: lastIndex}
 	switch {
-	case prevExists && !nextExists:
-		passage.Next = PassLoc{}
+	case prevExists && !nextExists: //if the new passage is the (new) last passage
 		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
+		passage.Next = PassLoc{}
 		work.Passages = append(work.Passages, passage)
 		work.Passages[prevIndex].Next = passloc
 		for i := range work.Passages {
 			work.Passages[i].Last = passloc
 		}
-	case !prevExists && nextExists:
+	case !prevExists && nextExists: //if the new passage is the (new) first passage
 		passage.Prev = PassLoc{}
 		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
 		work.Passages = append(work.Passages, passage)
@@ -415,9 +418,9 @@ func InsertPassage(passage Passage, work Work) Work {
 		for i := range work.Passages {
 			work.Passages[i].First = passloc
 		}
-	default:
-		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
+	default: //if new passage is to be added somewhere in between.
 		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
+		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
 		work.Passages = append(work.Passages, passage)
 		work.Passages[prevIndex].Next = passloc
 		work.Passages[nextIndex].Prev = passloc
