@@ -2,6 +2,7 @@ package gocite
 
 import (
 	"errors"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -38,19 +39,20 @@ type Textgroup struct {
 
 // Work is a container for CTS passages that belong to the same work
 type Work struct {
-	WorkID   string
-	Passages []Passage
-	Ordered  bool
+	WorkID      string
+	Passages    []Passage
+	Ordered     bool
+	First, Last PassLoc
 }
 
 // Passage is the smallest CTSNode
 type Passage struct {
-	PassageID               string
-	Range                   bool
-	Text                    EncText
-	Index                   int
-	First, Last, Prev, Next PassLoc
-	ImageLinks              []Triple
+	PassageID  string
+	Range      bool
+	Text       EncText
+	Index      int
+	Prev, Next PassLoc
+	ImageLinks []Triple
 }
 
 // PassLoc is a container for the ID and
@@ -218,20 +220,23 @@ func GetIndexByID(passageID string, work Work) (int, bool) {
 
 // GetPassageByInd returns the Passage at given Index in the Work.Passages slice
 //(Not by Passage.Index)
-func GetPassageByInd(sliceIndex int, work Work) Passage {
-	return work.Passages[sliceIndex]
+func GetPassageByInd(sliceIndex int, work Work) (Passage, error) {
+	if sliceIndex >= 0 && sliceIndex <= len(work.Passages)-1 {
+		return work.Passages[sliceIndex], nil
+	}
+	return Passage{}, errors.New("GetPassageByInd: Index out of bounds of work.Passages slice")
 }
 
-// GetLast returns the Passage that appears to be the last in the passage slice in a given a Work
-//(not the one saved as Passage.Last)
-func GetLast(work Work) Passage {
-	return work.Passages[len(work.Passages)-1]
-}
-
-// GetFirst returns the Passage that appears to be the first in the passage slice in a given a Work
-//(not the one saved as Passage.First)
+// GetFirst returns the Passage that is the first in the passage slice in a given a Work
+//(not the one saved as Work.First)
 func GetFirst(work Work) Passage {
 	return work.Passages[0]
+}
+
+// GetLast returns the Passage with the last index in the passage slice in a given a Work
+//(not the one saved as Work.Last)
+func GetLast(work Work) Passage {
+	return work.Passages[len(work.Passages)-1]
 }
 
 // GetNext returns the Passage after the Passage given the PassageID in given Work
@@ -257,167 +262,256 @@ func GetPrev(passageID string, work Work) Passage {
 }
 
 // DelPassage deletes a Passage from a Work by changing the references
-func DelPassage(passageID string, work Work) Work {
+func DelPassage(passageID string, work Work) (Work, error) {
 	if len(work.Passages) == 0 {
-		return work
+		return work, errors.New("DelPassage: Work was empty")
 	}
 	index, found := GetIndexByID(passageID, work)
 	if !found {
-		return work
+		return work, errors.New("DelPassage: Passage " + passageID + " not found in Work " + work.WorkID)
 	}
-	passage := GetPassageByInd(index, work)
+	passage, err := GetPassageByInd(index, work)
+	if err != nil {
+		log.Printf("DelPassage: Error getting Passage by id: %s\n", err)
+		return work, err
+	}
 	switch {
+	//passage without Prev and Next: was the last passage remaining in this Work
 	case !work.Passages[index].Prev.Exists && !work.Passages[index].Next.Exists:
-		temp := Work{WorkID: work.WorkID, Ordered: true}
-		return temp
+		temp := Work{WorkID: work.WorkID, Ordered: true} //an empty work that has nothing but a WorkID and Ordered field
+		return temp, nil
+		//passage has no Prev: was the first Passage in the Work
 	case !work.Passages[index].Prev.Exists:
-		work := DelFirstPassage(work)
-		return work
+		work, err := DelFirstPassage(work)
+		if err == nil {
+			return work, nil
+		}
+		return work, err
+		//passage has no Next: was the last Passage in the Work
 	case !work.Passages[index].Next.Exists:
-		work := DelLastPassage(work)
-		return work
+		work, err := DelLastPassage(work)
+		if err == nil {
+			return work, nil
+		}
+		return work, err
 	default:
-		prevInd := passage.Prev.Index
-		nextInd := passage.Next.Index
-		work.Passages[prevInd].Next = passage.Next
-		work.Passages[nextInd].Prev = passage.Prev
+		work.Passages[passage.Prev.Index].Next = passage.Next
+		work.Passages[passage.Next.Index].Prev = passage.Prev
 		work.Passages[index] = Passage{}
 		work.Ordered = false
 	}
-	return work
+	return work, nil
 }
 
 // DelFirstPassage deletes the first Passage from a Work by changing the references
-func DelFirstPassage(work Work) Work {
+func DelFirstPassage(work Work) (Work, error) {
 	if len(work.Passages) == 0 {
-		return work
+		return work, errors.New("DelFirstPassage: Work was empty")
 	}
 	passageIndex, found := GetFirstIndex(work)
 	if !found {
-		return work
+		return work, errors.New("DelFirstPassage: First Index not found")
 	}
-	newFirst := work.Passages[passageIndex].Next
-	for i := range work.Passages {
-		work.Passages[i].First = newFirst
-	}
-	work.Passages[newFirst.Index].Prev = PassLoc{}
+	work.First = work.Passages[passageIndex].Next
+	work.Passages[work.First.Index].Prev = PassLoc{Exists: false, PassageID: "", Index: 0}
 	work.Passages[passageIndex] = Passage{}
-	return work
+	return work, nil
 }
 
 // DelLastPassage deletes the last Passage from a Work by changing the references
-func DelLastPassage(work Work) Work {
+func DelLastPassage(work Work) (Work, error) {
 	if len(work.Passages) == 0 {
-		return work
+		return work, errors.New("DelLastPassage: Work was empty")
 	}
 	passageIndex, found := GetLastIndex(work)
 	if !found {
-		return work
+		return work, errors.New("DelLastPassage: Last Index not found")
 	}
-	newLast := work.Passages[passageIndex].Prev
-	for i := range work.Passages {
-		work.Passages[i].Last = newLast
-	}
-	work.Passages[newLast.Index].Next = PassLoc{}
+	work.Last = work.Passages[passageIndex].Prev
+	work.Passages[work.Last.Index].Next = PassLoc{}
 	work.Passages[passageIndex] = Passage{}
-	return work
+	return work, nil
 }
 
-// GetFirstIndex returns the Passage.First.Index of the first Passage in a Work
-//that has Passage.First.Index.Exists set to true,
-//along with a bool whether it has found that index.
-func GetFirstIndex(work Work) (int, bool) {
+/*//FindFirstIndex is deprecated and replaced by GetFirstIndex for legacy
+func FindFirstIndex(work Work) (int, bool) {
+	return GetFirstIndex(work)
+}*/
+
+// FindFirstIndex was returning the First.Index saved in a passage.
+//This task is now fullfilled by GetFirstIndex
+//Now, FindFirstIndex returns the lowest Passage.Index of the Passages in a Work,
+//along with a bool whether it has found one.
+//This is necessary for the first analysis of a work. For example in SortPassages.
+func FindFirstIndex(work Work) (int, bool) {
+	index := -1
+	index = work.Passages[0].Index
 	for i := range work.Passages {
-		if work.Passages[i].First.Exists {
-			return work.Passages[i].First.Index, true
+		if work.Passages[i].Index < index {
+			index = work.Passages[i].Index
 		}
+	}
+	if index != -1 {
+		return index, true
 	}
 	return 0, false
 }
 
-// GetLastIndex returns the Passage.Last.Index of the first Passage in a Work
-//that has Passage.Last.Index.Exists set to true,
+// GetFirstIndex returns the Work.First.Index of given Work
+//along with a bool whether it has found that index.
+func GetFirstIndex(work Work) (int, bool) {
+	if work.First.Exists {
+		return work.First.Index, true
+	}
+	return 0, false
+}
+
+/*//FindLastIndex is deprecated and repalced by GetlastIndex for legacy
+func FindLastIndex(work Work) (int, bool) {
+	return GetLastIndex(work)
+}*/
+
+// FindLastIndex was returning the Last.Index saved in a passage.
+//This task is now fullfilled by GetLastIndex
+//Now, FindLastIndex returns the highest Passage.Index of the Passages in a Work
+//along with a bool whether it has found one.
+//This is necessary for the first analysis of a work. For example in SortPassages.
+func FindLastIndex(work Work) (int, bool) {
+	index := -1
+	index = work.Passages[0].Index
+	for i := range work.Passages {
+		if work.Passages[i].Index > index {
+			index = work.Passages[i].Index
+		}
+	}
+	if index != -1 {
+		return index, true
+	}
+	return 0, false
+}
+
+// GetLastIndex returns the Work.Last.Index of given Work
 //along with a bool whether it has found that index.
 func GetLastIndex(work Work) (int, bool) {
-	for i := range work.Passages {
-		if work.Passages[i].Last.Exists {
-			return work.Passages[i].Last.Index, true
-		}
+	if work.Last.Exists {
+		return work.Last.Index, true
 	}
 	return 0, false
 }
 
 // SortPassages sorts the Passages in the Work.Passages slice from First to Last
 //according to their Passage.Index values
-//empty Passages are not being appended
-func SortPassages(work Work) Work {
+//empty Passages are not taken over
+func SortPassages(work Work) (Work, error) {
+	log.Printf("\nSorting Passages in %s\n", work.WorkID)
 	if len(work.Passages) == 0 {
-		return work
+		log.Println("Work was empty")
+		return work, errors.New("SortPassages: Work was empty")
 	}
-	cursor, found := GetFirstIndex(work)
+	if work.Ordered {
+		log.Println("Work is marked as ordered")
+	} else {
+		log.Println("Work is marked as NOT ordered")
+	}
+	var cursor int
+	cursor, found := GetFirstIndex(work) //cursor points to slice index of the next Passage in work which is to be appended to result
+	if !found {                          //if there is not first index saved in any of the Passage.Index fields, work will be returned unsorted
+		log.Println("First Index not saved in Work yet. Trying to find it now")
+		cursor, found = FindFirstIndex(work)
+		if !found {
+			log.Println("First Index not found in Work")
+			return work, errors.New("SortPassages: First Index not found in Work " + work.WorkID) //GetFirstIndex does not actively search for the lowest (and therefore first) index in a work
+		}
+	}
+	log.Printf("First Index: %d, %s\n", cursor, work.Passages[cursor].PassageID)
+	lastIndex, found := GetLastIndex(work) //find the last Index, needed as termination condition
 	if !found {
-		return work
+		log.Println("Last Index not saved in Work yet. Trying to find it now")
+		lastIndex, found = FindLastIndex(work)
+		if !found {
+			log.Println("Last Index not found in Work")
+			return work, errors.New("SortPassages: Last Index not found in work " + work.WorkID)
+		}
 	}
-	result := Work{WorkID: work.WorkID, Ordered: true}
-	index := 0
+	log.Printf("Last Index: %d, %s\n", lastIndex, work.Passages[lastIndex].PassageID) //work.Passages[lastIndex].PassageID) shows the Passage at the last index of the USORTED ARRAY!
+	result := Work{WorkID: work.WorkID, Ordered: true}                                //result is the sorted Work that will be returned
+	index := 0                                                                        //index represents the index the next Passage will get in its Index field
 	last := false
 	for !last {
-		temp := work.Passages[cursor]
-		temp.Index = index
-		temp.First.Index = 0
-		if index != 0 {
-			temp.Prev.Index = index - 1
+		tempPassage := work.Passages[cursor] //get the Passage from work
+		log.Printf("\ntempPassage: %s\nIndex: %d\nPrev.Index: %d Prev.PassageID: %s\nNext.Index: %d Next.PassageID: %s\n",
+			tempPassage.PassageID, tempPassage.Index,
+			tempPassage.Prev.Index, tempPassage.Prev.PassageID,
+			tempPassage.Next.Index, tempPassage.Next.PassageID)
+		tempPassage.Index = index //set its own Index to the current index
+		result.First.Index = 0    //set the index of First to 0
+		if index != 0 {           //if this is not the first Passage in result
+			tempPassage.Prev.Index = index - 1 //set the Prev index field to one lower than the current index
+		} else {
+			log.Println("*** I'm the first. ***")
 		}
-		if work.Passages[cursor].PassageID == work.Passages[cursor].Last.PassageID {
-			last = true
+		if index == lastIndex { //if the cursor points to the last index
+			last = true //mark it in the last variable
+			log.Println("*** I'm the last.  ***")
 		}
-		if last == false {
-			temp.Next.Index = index + 1
-			cursor = work.Passages[cursor].Next.Index
-			index++
+		if last == false { //if this is not the last Passage in the work
+			tempPassage.Next.Index = index + 1                                        //set the Next index field to one higher than the current index
+			nextCursor, _ := GetIndexByID(work.Passages[cursor].Next.PassageID, work) //get the Index of the next Passage according to what is saved in the Passage.PassageID the cursor currently points to
+			cursor = nextCursor                                                       //set the cursor to the index of the next Passage
+			index++                                                                   //increment the index variable
 		}
-		result.Passages = append(result.Passages, temp)
+		result.Passages = append(result.Passages, tempPassage) //append the temporary Passage to the resulting work
 	}
-	for i := range result.Passages {
-		result.Passages[i].Last.Index = index
-	}
-	return result
+	result.First = PassLoc{Exists: true, PassageID: result.Passages[0].PassageID, Index: 0}
+	result.Passages[0].Prev = PassLoc{}
+	result.Last = PassLoc{Exists: true, PassageID: result.Passages[lastIndex].PassageID, Index: lastIndex}
+	result.Passages[lastIndex].Next = PassLoc{}
+	log.Println("*** Sorting finished. ***")
+	log.Println("** Before **")
+	log.Printf("work.First.Index: %d, work.First.PassageID: %s\n", work.First.Index, work.First.PassageID)
+	log.Printf("work.Last.Index: %d, work.Last.PassageID: %s\n", work.Last.Index, work.Last.PassageID)
+	log.Println("** Afterwards **")
+	log.Printf("result.First.Index: %d, result.First.PassageID: %s\n", result.First.Index, result.First.PassageID)
+	log.Printf("result.Last.Index: %d, result.Last.PassageID: %s\n", result.Last.Index, result.Last.PassageID)
+	return result, nil
 }
 
 // InsertPassage inserts a Passage into a Work
-func InsertPassage(passage Passage, work Work) Work {
+func InsertPassage(passage Passage, work Work) (Work, error) {
 	if len(work.Passages) == 0 { //if the work has no passages yet
-		passage.First = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
-		passage.Last = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
+		work.First = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
+		work.Last = PassLoc{Exists: true, PassageID: passage.PassageID, Index: 0}
 		passage.Next = PassLoc{}
 		passage.Prev = PassLoc{}
 		work.Passages = append(work.Passages, passage)
-		return work
+		return work, nil
 	}
 	nextIndex, nextExists := GetIndexByID(passage.Next.PassageID, work)
 	prevIndex, prevExists := GetIndexByID(passage.Prev.PassageID, work)
-	firstIndex, _ := GetFirstIndex(work)
-	lastIndex, _ := GetLastIndex(work)
+	firstIndex, found := GetFirstIndex(work)
+	if !found { //we could add a FindFirstIndex here.
+		return work, errors.New("InsertPassage: First Index not found")
+	}
+	lastIndex, found := GetLastIndex(work)
+	if !found { //we could add a FindLastIndex here
+		return work, errors.New("InsertPassage: Last Index not found")
+	}
 	passloc := PassLoc{Exists: true, PassageID: passage.PassageID, Index: len(work.Passages)}
-	passage.First = PassLoc{Exists: true, PassageID: work.Passages[firstIndex].PassageID, Index: firstIndex}
-	passage.Last = PassLoc{Exists: true, PassageID: work.Passages[lastIndex].PassageID, Index: lastIndex}
+	work.First = PassLoc{Exists: true, PassageID: work.Passages[firstIndex].PassageID, Index: firstIndex}
+	work.Last = PassLoc{Exists: true, PassageID: work.Passages[lastIndex].PassageID, Index: lastIndex}
 	switch {
 	case prevExists && !nextExists: //if the new passage is the (new) last passage
 		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
 		passage.Next = PassLoc{}
 		work.Passages = append(work.Passages, passage)
 		work.Passages[prevIndex].Next = passloc
-		for i := range work.Passages {
-			work.Passages[i].Last = passloc
-		}
+		work.Last = passloc
 	case !prevExists && nextExists: //if the new passage is the (new) first passage
 		passage.Prev = PassLoc{}
 		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
 		work.Passages = append(work.Passages, passage)
 		work.Passages[nextIndex].Prev = passloc
-		for i := range work.Passages {
-			work.Passages[i].First = passloc
-		}
+		work.First = passloc
 	default: //if new passage is to be added somewhere in between.
 		passage.Prev = PassLoc{Exists: true, PassageID: work.Passages[prevIndex].PassageID, Index: prevIndex}
 		passage.Next = PassLoc{Exists: true, PassageID: work.Passages[nextIndex].PassageID, Index: nextIndex}
@@ -427,7 +521,7 @@ func InsertPassage(passage Passage, work Work) Work {
 		work.Passages[len(work.Passages)-1].Index = len(work.Passages) - 1
 	}
 	work.Ordered = false
-	return work
+	return work, nil
 }
 
 // RReturnSubStr returns the substring identified by the reverse of @substr[n]. [n] is optional.
@@ -491,50 +585,54 @@ func ReturnSubStr(cmd, s string) (string, error) {
 	return newstr, nil
 }
 
-func after(value string, a string) (string, error) {
-	// Get substring after a string.
-	pos := strings.Index(value, a)
+// before returns the substring of the originalString that antecedes the beforThisString,
+//as long as the beforeThisString is contained in the originalString
+func before(originalString string, beforeThisString string) (string, error) {
+	// Get substring before a string.
+	pos := strings.Index(originalString, beforeThisString)
 	if pos == -1 {
-		return "", errors.New(a + " not found in " + value)
+		return "", errors.New(beforeThisString + "not found")
 	}
-	adjustedPos := pos + len(a)
-	if adjustedPos >= len(value) {
-		return "", nil
-	}
-	return value[adjustedPos:], nil
+	return originalString[0:pos], nil
 }
 
-func before(value string, a string) (string, error) {
-	// Get substring before a string.
-	pos := strings.Index(value, a)
+// after returns the substring of the originalString that precedes the afterThisString,
+//as long as the afterThisString is contained in the originalString.
+func after(originalString string, afterThisString string) (string, error) {
+	// Get substring after a string.
+	pos := strings.Index(originalString, afterThisString)
 	if pos == -1 {
-		return "", errors.New(a + "not found")
+		return "", errors.New(afterThisString + " not found in " + originalString)
 	}
-	return value[0:pos], nil
+	adjustedPos := pos + len(afterThisString)
+	if adjustedPos >= len(originalString) {
+		return "", nil
+	}
+	return originalString[adjustedPos:], nil
 }
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
-func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
+func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 	text := []string{}
 	extrID := []string{}
 	startsub := false
 	endsub := false
 	startcmd := ""
 	endcmd := ""
-	if !IsCTSURN(id) {
+	if !IsCTSURN(ctsID) {
 		return []TextAndID{}, errors.New("urn is not a valid cts urn")
 	}
-	switch IsRange(id) {
+	switch IsRange(ctsID) {
 	case false:
-		switch WantSubstr(id) {
+		switch WantSubstr(ctsID) {
 		case false:
-			p, err := GetPassageByID(id, work)
+			p, err := GetPassageByID(ctsID, work)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{{ID: id, Text: p.Text.TXT}}, nil
+			return []TextAndID{{ID: ctsID, Text: p.Text.TXT}}, nil
 		case true:
-			idSl := strings.Split(id, "@")
+			idSl := strings.Split(ctsID, "@")
 			if len(idSl) != 2 {
 				return []TextAndID{}, errors.New("two many @")
 			}
@@ -552,10 +650,10 @@ func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
 				return []TextAndID{}, err
 			}
 			idSl[1] = reg.ReplaceAllString(idSl[1], "")
-			return []TextAndID{{ID: id, Text: idSl[1]}}, nil
+			return []TextAndID{{ID: ctsID, Text: idSl[1]}}, nil
 		}
 	case true:
-		start, end, err := findStartEnd(id)
+		start, end, err := findStartEnd(ctsID)
 		firstid := start
 		lastid := end
 		startRoot := strings.Split(start, "@")
@@ -576,7 +674,7 @@ func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{{ID: id, Text: p.Text.TXT}}, nil
+			return []TextAndID{{ID: ctsID, Text: p.Text.TXT}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
@@ -620,8 +718,11 @@ func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
 		case false:
 			_, found := GetIndexByID(start, work)
 			_, found2 := GetIndexByID(end, work)
-			if !found || !found2 {
-				return []TextAndID{}, errors.New("passage not found")
+			if !found {
+				return []TextAndID{}, errors.New("Index of start passage not found")
+			}
+			if !found2 {
+				return []TextAndID{}, errors.New("Index of end passage not found")
 			}
 			found = false
 			startID := start
@@ -673,9 +774,9 @@ func ExtractTextByID(id string, work Work) ([]TextAndID, error) {
 	return selection, nil
 }
 
-//contains returns true if the 'needle' string is found in the 'heystack' string slice
-func contains(heystack []string, needle string) bool {
-	for _, straw := range heystack {
+//contains returns true if the 'needle' string is found in the 'haystack' string slice
+func contains(haystack []string, needle string) bool {
+	for _, straw := range haystack {
 		if straw == needle {
 			return true
 		}
