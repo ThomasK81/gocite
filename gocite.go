@@ -373,7 +373,7 @@ func FindLastIndex(work Work) (int, bool) {
 //This is necessary for the first analysis of a work. For example in SortPassages.
 func FindLastIndex(work Work) (int, bool) {
 	for i := len(work.Passages) - 1; i >= 0; i-- {
-		if work.Passages[i].Prev.Exists == true && work.Passages[i].Next.Exists == false {
+		if (work.Passages[i].Prev.Exists == true && work.Passages[i].Next.Exists) == false {
 			return work.Passages[i].Index, true
 		}
 	}
