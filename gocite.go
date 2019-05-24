@@ -339,20 +339,14 @@ func FindFirstIndex(work Work) (int, bool) {
 }*/
 
 // FindFirstIndex was returning the First.Index saved in a passage.
-//This task is now fullfilled by GetFirstIndex
+//This task is now fulfilled by GetFirstIndex
 //Now, FindFirstIndex returns the lowest Passage.Index of the Passages in a Work,
 //along with a bool whether it has found one.
 //This is necessary for the first analysis of a work. For example in SortPassages.
 func FindFirstIndex(work Work) (int, bool) {
-	index := -1
-	index = work.Passages[0].Index
 	for i := range work.Passages {
-		if work.Passages[i].Index < index {
-			index = work.Passages[i].Index
-		}
-	}
-	if index != -1 {
-		return index, true
+		if work.Passages[i].Prev.Exists == false && work.Passages[i].Next.Exists == true {
+			return work.Passages[i].Index, true
 	}
 	return 0, false
 }
@@ -372,20 +366,14 @@ func FindLastIndex(work Work) (int, bool) {
 }*/
 
 // FindLastIndex was returning the Last.Index saved in a passage.
-//This task is now fullfilled by GetLastIndex
+//This task is now fulfilled by GetLastIndex
 //Now, FindLastIndex returns the highest Passage.Index of the Passages in a Work
 //along with a bool whether it has found one.
 //This is necessary for the first analysis of a work. For example in SortPassages.
 func FindLastIndex(work Work) (int, bool) {
-	index := -1
-	index = work.Passages[0].Index
-	for i := range work.Passages {
-		if work.Passages[i].Index > index {
-			index = work.Passages[i].Index
-		}
-	}
-	if index != -1 {
-		return index, true
+	for i := len(work.Passages) - 1; i >= 0; i-- {
+		if work.Passages[i].Prev.Exists == true && work.Passages[i].Next.Exists == false {
+			return work.Passages[i].Index, true
 	}
 	return 0, false
 }
