@@ -347,6 +347,7 @@ func FindFirstIndex(work Work) (int, bool) {
 	for i := range work.Passages {
 		if work.Passages[i].Prev.Exists == false && work.Passages[i].Next.Exists == true {
 			return work.Passages[i].Index, true
+		}
 	}
 	return 0, false
 }
@@ -374,6 +375,7 @@ func FindLastIndex(work Work) (int, bool) {
 	for i := len(work.Passages) - 1; i >= 0; i-- {
 		if work.Passages[i].Prev.Exists == true && work.Passages[i].Next.Exists == false {
 			return work.Passages[i].Index, true
+		}
 	}
 	return 0, false
 }
