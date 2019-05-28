@@ -195,6 +195,8 @@ var newThirdPassageChange = gocite.Passage{
 	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 }
 
+//The testcorpora should get some more spelling names, according to the tasks they fulfill or possibly some documentation
+
 var oldTestcorpus = oldTestWork{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []oldTestPassage{
@@ -217,6 +219,7 @@ var newTestcorpus = gocite.Work{
 	Ordered: true,
 }
 
+//testcorpus2 is used to tests if sorting works with an empty passage in a work
 var oldTestcorpus2 = oldTestWork{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []oldTestPassage{
@@ -273,6 +276,7 @@ var newTestcorpus4 = gocite.Work{
 	Last:    gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1},
 	Ordered: true}
 
+//tescorpus5 is used to tests if sorting works with unordered passages in a work
 var oldTestcorpus5 = oldTestWork{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []oldTestPassage{
@@ -358,22 +362,40 @@ var newTestcorpus8 = gocite.Work{
 	Ordered: false,
 }
 
-var URNtests3 = []oldWorkTestgroup{
+var OldURNtests3 = []oldWorkTestgroup{ //slice format necessary?
 	{inputCorpus: oldTestcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", outputCorpus: oldTestcorpus2},
 }
 
-var URNtests4a = []oldWorkTestgroup{
+var URNtests3 = []newWorkTestgroup{ //slice format necessary?
+	{inputCorpus: newTestcorpus, inputID: "urn:cts:collection:workgroup.work:2-4", outputCorpus: newTestcorpus2},
+}
+
+var oldURNtests4a = []oldWorkTestgroup{
 	{inputCorpus: oldTestcorpus3, inputID: oldFirstPassageChange.First.PassageID},
 	{inputCorpus: oldTestcorpus5, inputID: oldFirstPassageChange.First.PassageID},
 }
 
-var URNtests4 = []oldWorkTestgroup{
+var URNtests4a = []newWorkTestgroup{
+	{inputCorpus: newTestcorpus3, inputID: newTestcorpus3.First.PassageID},
+	{inputCorpus: newTestcorpus5, inputID: newTestcorpus5.First.PassageID},
+}
+
+var oldURNtests4 = []oldWorkTestgroup{
 	{inputCorpus: oldTestcorpus2, outputCorpus: oldTestcorpus3},
 	{inputCorpus: oldTestcorpus5, outputCorpus: oldTestcorpus6},
 }
 
-var URNtests5 = []oldWorkTestgroup{
+var URNtests4 = []newWorkTestgroup{
+	{inputCorpus: newTestcorpus2, outputCorpus: newTestcorpus3},
+	{inputCorpus: newTestcorpus5, outputCorpus: newTestcorpus6},
+}
+
+var oldTests5 = []oldWorkTestgroup{ //slice format necessary?
 	{inputCorpus: oldTestcorpus7, outputCorpus: oldTestcorpus8},
+}
+
+var URNtests5 = []newWorkTestgroup{ //slice format necessary?
+	{inputCorpus: newTestcorpus7, outputCorpus: newTestcorpus8},
 }
 
 func TestSplitCTS(t *testing.T) {
@@ -467,40 +489,36 @@ func TestIsExemplarID(t *testing.T) {
 	}
 }
 
-func TestDelPassage(t *testing.T) {
-	for _, pair := range URNtests3 {
-		v, _ := gocite.DelPassage(pair.inputID, pair.inputcorpus)
-		baseWork := oldTestWork{Ordered: v.Ordered}
-		compareWork := oldTestWork{Ordered: pair.inputcorpus.Ordered}
+func TestDePlassage(t *testing.T) {
+	for _, workTestgroup := range URNtests3 {
+		sortedWork, _ := gocite.DelPassage(workTestgroup.inputID, workTestgroup.inputCorpus)
+		baseWork := oldTestWork{Ordered: sortedWork.Ordered}
+		compareWork := oldTestWork{Ordered: workTestgroup.inputCorpus.Ordered}
 		if baseWork.Ordered == compareWork.Ordered {
 			t.Error(
-				"For deleting", pair.inputID,
-				"expected", !pair.inputcorpus.Ordered,
-				"got", pair.inputcorpus.Ordered,
+				"For deleting", workTestgroup.inputID,
+				"expected", !workTestgroup.inputCorpus.Ordered,
+				"got", workTestgroup.inputCorpus.Ordered,
 			)
 		}
-		for i := range v.Passages {
-			basePassage := oldTestPassage{PassageID: v.Passages[i].PassageID,
-				Range: v.Passages[i].Range,
-				Text:  v.Passages[i].Text,
-				Index: v.Passages[i].Index,
-				First: v.Passages[i].First,
-				Last:  v.Passages[i].Last,
-				Prev:  v.Passages[i].Prev,
-				Next:  v.Passages[i].Next}
-			comparePassage := oldTestPassage{PassageID: pair.output.Passages[i].PassageID,
-				Range: pair.output.Passages[i].Range,
-				Text:  pair.output.Passages[i].Text,
-				Index: pair.output.Passages[i].Index,
-				First: pair.output.Passages[i].First,
-				Last:  pair.output.Passages[i].Last,
-				Prev:  pair.output.Passages[i].Prev,
-				Next:  pair.output.Passages[i].Next}
+		for i := range sortedWork.Passages {
+			basePassage := newTestPassage{PassageID: sortedWork.Passages[i].PassageID,
+				Range: sortedWork.Passages[i].Range,
+				Text:  sortedWork.Passages[i].Text,
+				Index: sortedWork.Passages[i].Index,
+				Prev:  sortedWork.Passages[i].Prev,
+				Next:  sortedWork.Passages[i].Next}
+			comparePassage := newTestPassage{PassageID: workTestgroup.outputCorpus.Passages[i].PassageID,
+				Range: workTestgroup.outputCorpus.Passages[i].Range,
+				Text:  workTestgroup.outputCorpus.Passages[i].Text,
+				Index: workTestgroup.outputCorpus.Passages[i].Index,
+				Prev:  workTestgroup.outputCorpus.Passages[i].Prev,
+				Next:  workTestgroup.outputCorpus.Passages[i].Next}
 			if basePassage != comparePassage {
 				t.Error(
-					"For deleting", pair.inputID,
-					"expected", pair.output.Passages[i],
-					"got", v.Passages[i],
+					"For deleting passage with ID ", workTestgroup.inputID,
+					" expected remaining passage", workTestgroup.outputCorpus.Passages[i],
+					", but got passage ", sortedWork.Passages[i], " instead",
 				)
 			}
 		}
@@ -509,56 +527,109 @@ func TestDelPassage(t *testing.T) {
 
 func TestFindFirstIndex(t *testing.T) {
 	for _, pair := range URNtests4a {
-		v, found := gocite.FindFirstIndex(pair.inputcorpus)
+		v, found := gocite.FindFirstIndex(pair.inputCorpus)
 		if found != true {
 			t.Error(
-				"For test ", pair.inputcorpus.WorkID,
+				"For test ", pair.inputCorpus.WorkID,
 				"expected", true,
 				"got", false,
 			)
 		}
-		if pair.inputcorpus.Passages[v].PassageID != pair.inputID {
+		if pair.inputCorpus.Passages[v].PassageID != pair.inputID {
 			t.Error(
-				"For test ", pair.inputcorpus.WorkID,
+				"For test ", pair.inputCorpus.WorkID,
 				"expected", pair.inputID,
-				"got", pair.inputcorpus.Passages[v].PassageID,
+				"got", pair.inputCorpus.Passages[v].PassageID,
 			)
 		}
 	}
 }
 
 func TestSortPassages(t *testing.T) {
-	for j, pair := range URNtests4 {
-		v := gocite.SortPassages(pair.inputcorpus)
-		if v.Ordered == false {
+	/*for j, workTestgroup := range oldURNtests4 { //two runs
+		var tempInputPassages []gocite.Passage
+		for k := range workTestgroup.inputCorpus.Passages { //three runs
+			var tempInputPassage = gocite.Passage{
+				PassageID: workTestgroup.inputCorpus.Passages[k].PassageID,
+				Range:     workTestgroup.inputCorpus.Passages[k].Range,
+				Text:      workTestgroup.inputCorpus.Passages[k].Text,
+				Index:     workTestgroup.inputCorpus.Passages[k].Index,
+				Prev:      workTestgroup.inputCorpus.Passages[k].Prev,
+				Next:      workTestgroup.inputCorpus.Passages[k].Next}
+			tempInputPassages = append(tempInputPassages, tempInputPassage)
+		}
+
+		tempInPutCorpus := gocite.Work{
+			WorkID:   workTestgroup.inputCorpus.WorkID,
+			Passages: tempInputPassages,
+			Ordered:  workTestgroup.inputCorpus.Ordered,
+		}
+
+		sortedWork, err := gocite.SortPassages(tempInPutCorpus)
+		if sortedWork.Ordered == false {
 			t.Error(
-				"For test ", j,
-				"expected", true,
-				"got", false,
+				"For sorting test ", j,
+				" with release 1.0.1 data expected", true,
+				" got ", false, ". Sorting failed.",
 			)
 		}
-		for i := range v.Passages {
-			basePassage := oldTestPassage{PassageID: v.Passages[i].PassageID,
-				Range: v.Passages[i].Range,
-				Text:  v.Passages[i].Text,
-				Index: v.Passages[i].Index,
-				First: v.Passages[i].First,
-				Last:  v.Passages[i].Last,
-				Prev:  v.Passages[i].Prev,
-				Next:  v.Passages[i].Next}
-			comparePassage := oldTestPassage{PassageID: pair.output.Passages[i].PassageID,
-				Range: pair.output.Passages[i].Range,
-				Text:  pair.output.Passages[i].Text,
-				Index: pair.output.Passages[i].Index,
-				First: pair.output.Passages[i].First,
-				Last:  pair.output.Passages[i].Last,
-				Prev:  pair.output.Passages[i].Prev,
-				Next:  pair.output.Passages[i].Next}
+		if err != nil {
+			t.Error("Error calling SortPassages: ", err)
+		}
+
+		for i := range sortedWork.Passages { //should run twice
+			basePassage := newTestPassage{PassageID: sortedWork.Passages[i].PassageID,
+				Range: sortedWork.Passages[i].Range,
+				Text:  sortedWork.Passages[i].Text,
+				Index: sortedWork.Passages[i].Index,
+				Prev:  sortedWork.Passages[i].Prev,
+				Next:  sortedWork.Passages[i].Next}
+			comparePassage := newTestPassage{PassageID: workTestgroup.outputCorpus.Passages[i].PassageID,
+				Range: workTestgroup.outputCorpus.Passages[i].Range,
+				Text:  workTestgroup.outputCorpus.Passages[i].Text,
+				Index: workTestgroup.outputCorpus.Passages[i].Index,
+				Prev:  workTestgroup.outputCorpus.Passages[i].Prev,
+				Next:  workTestgroup.outputCorpus.Passages[i].Next}
 			if basePassage != comparePassage {
 				t.Error(
-					"For test ", j, i,
-					"expected", pair.output.Passages[i],
-					"got", v.Passages[i],
+					"For sorting test ", j, " passage ", i,
+					" with release 1.0.1 data expected ", URNtests4[j].outputCorpus.Passages[i],
+					" got ", sortedWork.Passages[i], " instead",
+				)
+			}
+		}
+	}*/
+
+	for j, workTestgroup := range URNtests4 {
+		work, err := gocite.SortPassages(workTestgroup.inputCorpus) //this could be adapted to account for the occurance of an error.
+		if work.Ordered == false {
+			t.Error(
+				"For sorting test ", j,
+				" with release 2.0.0 data expected", true,
+				" got ", false, ". Sorting failed.",
+			)
+		}
+		if err != nil {
+			t.Error("Error calling SortPassages: ", err)
+		}
+		for i := range work.Passages {
+			basePassage := newTestPassage{PassageID: work.Passages[i].PassageID,
+				Range: work.Passages[i].Range,
+				Text:  work.Passages[i].Text,
+				Index: work.Passages[i].Index,
+				Prev:  work.Passages[i].Prev,
+				Next:  work.Passages[i].Next}
+			comparePassage := newTestPassage{PassageID: workTestgroup.outputCorpus.Passages[i].PassageID,
+				Range: workTestgroup.outputCorpus.Passages[i].Range,
+				Text:  workTestgroup.outputCorpus.Passages[i].Text,
+				Index: workTestgroup.outputCorpus.Passages[i].Index,
+				Prev:  workTestgroup.outputCorpus.Passages[i].Prev,
+				Next:  workTestgroup.outputCorpus.Passages[i].Next}
+			if basePassage != comparePassage {
+				t.Error(
+					"For sorting test ", j, " passage ", i,
+					" with release 2.0.0 data expected ", workTestgroup.outputCorpus.Passages[i],
+					" got ", work.Passages[i], " instead",
 				)
 			}
 		}
@@ -566,11 +637,16 @@ func TestSortPassages(t *testing.T) {
 }
 
 func TestInsertPassage(t *testing.T) {
-	v := gocite.InsertPassage(oldSecondPassage, URNtests5[0].inputcorpus)
+	v, err := gocite.InsertPassage(newSecondPassage, URNtests5[0].inputCorpus)
 	if v.Ordered == true {
 		t.Error(
 			"Expected ordered", false,
 			"got", true,
+		)
+	}
+	if err != nil {
+		t.Error(
+			"Error calling InsertPassage: ", err,
 		)
 	}
 	for i := range v.Passages {
@@ -578,22 +654,18 @@ func TestInsertPassage(t *testing.T) {
 			Range: v.Passages[i].Range,
 			Text:  v.Passages[i].Text,
 			Index: v.Passages[i].Index,
-			First: v.Passages[i].First,
-			Last:  v.Passages[i].Last,
 			Prev:  v.Passages[i].Prev,
 			Next:  v.Passages[i].Next}
-		comparePassage := oldTestPassage{PassageID: URNtests5[0].output.Passages[i].PassageID,
-			Range: URNtests5[0].output.Passages[i].Range,
-			Text:  URNtests5[0].output.Passages[i].Text,
-			Index: URNtests5[0].output.Passages[i].Index,
-			First: URNtests5[0].output.Passages[i].First,
-			Last:  URNtests5[0].output.Passages[i].Last,
-			Prev:  URNtests5[0].output.Passages[i].Prev,
-			Next:  URNtests5[0].output.Passages[i].Next}
+		comparePassage := oldTestPassage{PassageID: URNtests5[0].outputCorpus.Passages[i].PassageID,
+			Range: URNtests5[0].outputCorpus.Passages[i].Range,
+			Text:  URNtests5[0].outputCorpus.Passages[i].Text,
+			Index: URNtests5[0].outputCorpus.Passages[i].Index,
+			Prev:  URNtests5[0].outputCorpus.Passages[i].Prev,
+			Next:  URNtests5[0].outputCorpus.Passages[i].Next}
 		if basePassage != comparePassage {
 			t.Error(
 				"For test", i,
-				"expected", URNtests5[0].output.Passages[i],
+				"expected", URNtests5[0].outputCorpus.Passages[i],
 				"got", v.Passages[i],
 			)
 		}
@@ -706,7 +778,7 @@ var testExtrcorpus = gocite.Work{
 	Ordered: true,
 }
 
-var PassageOne = gocite.Passage{
+var oldPassageOne = oldTestPassage{
 	PassageID: "urn:cts:collection:workgroup.work:1",
 	Range:     false,
 	Text: gocite.EncText{
@@ -719,7 +791,18 @@ var PassageOne = gocite.Passage{
 	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2", Index: 1},
 }
 
-var PassageTwo = gocite.Passage{
+var PassageOne = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:1",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is is the first node.",
+	},
+	Index: 0,
+	Prev:  gocite.PassLoc{},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2", Index: 1},
+}
+
+var oldPassageTwo = oldTestPassage{
 	PassageID: "urn:cts:collection:workgroup.work:2",
 	Range:     false,
 	Text: gocite.EncText{
@@ -732,7 +815,18 @@ var PassageTwo = gocite.Passage{
 	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:3", Index: 2},
 }
 
-var PassageThree = gocite.Passage{
+var PassageTwo = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:2",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is. the second. node.",
+	},
+	Index: 1,
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
+	Next:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:3", Index: 2},
+}
+
+var oldPassageThree = oldTestPassage{
 	PassageID: "urn:cts:collection:workgroup.work:3",
 	Range:     false,
 	Text: gocite.EncText{
@@ -741,6 +835,17 @@ var PassageThree = gocite.Passage{
 	Index: 2,
 	First: gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:1", Index: 0},
 	Last:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:3", Index: 2},
+	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2", Index: 1},
+	Next:  gocite.PassLoc{},
+}
+
+var PassageThree = gocite.Passage{
+	PassageID: "urn:cts:collection:workgroup.work:3",
+	Range:     false,
+	Text: gocite.EncText{
+		TXT: "This is the third node.",
+	},
+	Index: 2,
 	Prev:  gocite.PassLoc{Exists: true, PassageID: "urn:cts:collection:workgroup.work:2", Index: 1},
 	Next:  gocite.PassLoc{},
 }
