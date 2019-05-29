@@ -3,7 +3,7 @@ package gocite_test
 import (
 	"testing"
 
-	"github.com/ThomasK81/gocite"
+	"gociteDev/gocite"
 )
 
 type oldTestPassage struct {
@@ -229,7 +229,7 @@ var oldTestcorpus2 = oldTestWork{
 	},
 	Ordered: false}
 
-var newTestcorpus2 = gocite.Work{
+var newTestcorpus2 = gocite.Work{ //101
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
 		newFirstPassageChange,
@@ -251,8 +251,20 @@ var oldTestcorpus3 = oldTestWork{
 var newTestcorpus3 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		{PassageID: newFirstPassageChange.PassageID, Range: newFirstPassageChange.Range, Text: newFirstPassageChange.Text, Index: 0, Next: gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1}},
-		{PassageID: newThirdPassageChange.PassageID, Range: newThirdPassageChange.Range, Text: newThirdPassageChange.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: oldFirstPassage.PassageID, Index: 0}},
+		{PassageID: newFirstPassageChange.PassageID,
+			Range: newFirstPassageChange.Range,
+			Text:  newFirstPassageChange.Text,
+			Index: 0,
+			Next: gocite.PassLoc{Exists: true,
+				PassageID: newThirdPassageChange.PassageID,
+				Index:     1}},
+		{PassageID: newThirdPassageChange.PassageID,
+			Range: newThirdPassageChange.Range,
+			Text:  newThirdPassageChange.Text,
+			Index: 1,
+			Prev: gocite.PassLoc{Exists: true,
+				PassageID: newFirstPassage.PassageID,
+				Index:     0}},
 	},
 	First:   gocite.PassLoc{Exists: true, PassageID: oldFirstPassageChange.PassageID, Index: 0},
 	Last:    gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1},
@@ -291,8 +303,8 @@ var newTestcorpus5 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
 		{PassageID: newFirstPassageChange.PassageID, Range: newFirstPassageChange.Range, Text: newFirstPassageChange.Text, Index: 0, Prev: newFirstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: newSecondPassage.PassageID, Index: 2}},
-		{PassageID: newThirdPassageChange.PassageID, Range: newThirdPassageChange.Range, Text: newThirdPassageChange.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: newSecondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
-		{PassageID: newSecondPassage.PassageID, Range: newSecondPassage.Range, Text: newSecondPassage.Text, Index: 2, Prev: gocite.PassLoc{Exists: true, PassageID: newThirdPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassage.PassageID, Index: 1}},
+		{PassageID: newThirdPassageChange.PassageID, Range: newThirdPassageChange.Range, Text: newThirdPassageChange.Text, Index: 2, Prev: gocite.PassLoc{Exists: true, PassageID: newSecondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
+		{PassageID: newSecondPassage.PassageID, Range: newSecondPassage.Range, Text: newSecondPassage.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: newThirdPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassage.PassageID, Index: 1}},
 	},
 	First:   oldFirstPassageChange.First,
 	Last:    oldFirstPassageChange.Last,

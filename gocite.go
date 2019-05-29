@@ -440,20 +440,27 @@ func SortPassages(work Work) (Work, error) {
 		} else {
 			log.Println("*** I'm the first. ***")
 		}
-		if index == lastIndex { //if the cursor points to the last index
+		//if index == lastIndex { //if the cursor points to the last index
+		if work.Passages[cursor].PassageID == work.Last.PassageID {
 			last = true //mark it in the last variable
 			log.Println("*** I'm the last.  ***")
 		}
 		if last == false { //if this is not the last Passage in the work
-			tempPassage.Next.Index = index + 1                                        //set the Next index field to one higher than the current index
-			nextCursor, _ := GetIndexByID(work.Passages[cursor].Next.PassageID, work) //get the Index of the next Passage according to what is saved in the Passage.PassageID the cursor currently points to
-			cursor = nextCursor                                                       //set the cursor to the index of the next Passage
-			index++                                                                   //increment the index variable
+			tempPassage.Next.Index = index + 1 //set the Next index field to one higher than the current index
+			cursor = work.Passages[cursor].Next.Index
+			/*nextCursor, _ := GetIndexByID(work.Passages[cursor].Next.PassageID, work) //get the Index of the next Passage according to what is saved in the Passage.PassageID the cursor currently points to
+			cursor = nextCursor*/ //set the cursor to the index of the next Passage
+			index++               //increment the index variable
 		}
 		result.Passages = append(result.Passages, tempPassage) //append the temporary Passage to the resulting work
 	}
 	result.First = PassLoc{Exists: true, PassageID: result.Passages[0].PassageID, Index: 0}
 	result.Passages[0].Prev = PassLoc{}
+	lastIndex, found = FindLastIndex(result)
+	if !found {
+		log.Println("Last Index not found in result")
+		return work, errors.New("SortPassages: Last Index not found in result " + work.WorkID)
+	}
 	result.Last = PassLoc{Exists: true, PassageID: result.Passages[lastIndex].PassageID, Index: lastIndex}
 	result.Passages[lastIndex].Next = PassLoc{}
 	log.Println("*** Sorting finished. ***")
