@@ -440,17 +440,14 @@ func SortPassages(work Work) (Work, error) {
 		} else {
 			log.Println("*** I'm the first. ***")
 		}
-		//if index == lastIndex { //if the cursor points to the last index
-		if work.Passages[cursor].PassageID == work.Last.PassageID {
+		if work.Passages[cursor].PassageID == work.Last.PassageID { //if the cursor points to the last index
 			last = true //mark it in the last variable
 			log.Println("*** I'm the last.  ***")
 		}
 		if last == false { //if this is not the last Passage in the work
 			tempPassage.Next.Index = index + 1 //set the Next index field to one higher than the current index
 			cursor = work.Passages[cursor].Next.Index
-			/*nextCursor, _ := GetIndexByID(work.Passages[cursor].Next.PassageID, work) //get the Index of the next Passage according to what is saved in the Passage.PassageID the cursor currently points to
-			cursor = nextCursor*/ //set the cursor to the index of the next Passage
-			index++               //increment the index variable
+			index++ //increment the index variable
 		}
 		result.Passages = append(result.Passages, tempPassage) //append the temporary Passage to the resulting work
 	}

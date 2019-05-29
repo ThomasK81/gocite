@@ -243,8 +243,26 @@ var newTestcorpus2 = gocite.Work{ //101
 var oldTestcorpus3 = oldTestWork{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []oldTestPassage{
-		{PassageID: oldFirstPassageChange.PassageID, Range: oldFirstPassageChange.Range, Text: oldFirstPassageChange.Text, Index: 0, First: gocite.PassLoc{Exists: true, PassageID: oldFirstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1}, Next: gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1}},
-		{PassageID: oldThirdPassageChange.PassageID, Range: oldThirdPassageChange.Range, Text: oldThirdPassageChange.Text, Index: 1, First: gocite.PassLoc{Exists: true, PassageID: oldFirstPassageChange.PassageID, Index: 0}, Last: gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1}, Prev: gocite.PassLoc{Exists: true, PassageID: oldFirstPassage.PassageID, Index: 0}},
+		{PassageID: oldFirstPassageChange.PassageID,
+			Range: oldFirstPassageChange.Range,
+			Text:  oldFirstPassageChange.Text,
+			Index: 0,
+			First: gocite.PassLoc{Exists: true,
+				PassageID: oldFirstPassageChange.PassageID, Index: 0},
+			Last: gocite.PassLoc{Exists: true,
+				PassageID: oldThirdPassageChange.PassageID, Index: 1},
+			Next: gocite.PassLoc{Exists: true,
+				PassageID: oldThirdPassageChange.PassageID, Index: 1}},
+		{PassageID: oldThirdPassageChange.PassageID,
+			Range: oldThirdPassageChange.Range,
+			Text:  oldThirdPassageChange.Text,
+			Index: 1,
+			First: gocite.PassLoc{Exists: true,
+				PassageID: oldFirstPassageChange.PassageID, Index: 0},
+			Last: gocite.PassLoc{Exists: true,
+				PassageID: oldThirdPassageChange.PassageID, Index: 1},
+			Prev: gocite.PassLoc{Exists: true,
+				PassageID: oldFirstPassage.PassageID, Index: 0}},
 	},
 	Ordered: true}
 
@@ -253,18 +271,15 @@ var newTestcorpus3 = gocite.Work{
 	Passages: []gocite.Passage{
 		{PassageID: newFirstPassageChange.PassageID,
 			Range: newFirstPassageChange.Range,
-			Text:  newFirstPassageChange.Text,
-			Index: 0,
+			Text:  newFirstPassageChange.Text, Index: 0,
 			Next: gocite.PassLoc{Exists: true,
-				PassageID: newThirdPassageChange.PassageID,
-				Index:     1}},
+				PassageID: newThirdPassageChange.PassageID, Index: 1}},
 		{PassageID: newThirdPassageChange.PassageID,
 			Range: newThirdPassageChange.Range,
 			Text:  newThirdPassageChange.Text,
 			Index: 1,
 			Prev: gocite.PassLoc{Exists: true,
-				PassageID: newFirstPassage.PassageID,
-				Index:     0}},
+				PassageID: newFirstPassage.PassageID, Index: 0}},
 	},
 	First:   gocite.PassLoc{Exists: true, PassageID: oldFirstPassageChange.PassageID, Index: 0},
 	Last:    gocite.PassLoc{Exists: true, PassageID: oldThirdPassageChange.PassageID, Index: 1},
@@ -293,8 +308,8 @@ var oldTestcorpus5 = oldTestWork{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []oldTestPassage{
 		{PassageID: oldFirstPassageChange.PassageID, Range: oldFirstPassageChange.Range, Text: oldFirstPassageChange.Text, Index: 0, First: oldFirstPassageChange.First, Last: oldFirstPassageChange.Last, Prev: oldFirstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: oldSecondPassage.PassageID, Index: 2}},
-		{PassageID: oldThirdPassageChange.PassageID, Range: oldThirdPassageChange.Range, Text: oldThirdPassageChange.Text, Index: 1, First: oldFirstPassageChange.First, Last: oldFirstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: oldSecondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
-		{PassageID: oldSecondPassage.PassageID, Range: oldSecondPassage.Range, Text: oldSecondPassage.Text, Index: 2, First: oldThirdPassageChange.First, Last: oldThirdPassageChange.Last, Prev: oldThirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: oldThirdPassage.PassageID, Index: 1}},
+		{PassageID: oldThirdPassageChange.PassageID, Range: oldThirdPassageChange.Range, Text: oldThirdPassageChange.Text, Index: 2, First: oldFirstPassageChange.First, Last: oldFirstPassageChange.Last, Prev: gocite.PassLoc{Exists: true, PassageID: oldSecondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
+		{PassageID: oldSecondPassage.PassageID, Range: oldSecondPassage.Range, Text: oldSecondPassage.Text, Index: 1, First: oldThirdPassageChange.First, Last: oldThirdPassageChange.Last, Prev: oldThirdPassageChange.First, Next: gocite.PassLoc{Exists: true, PassageID: oldThirdPassage.PassageID, Index: 1}},
 	},
 	Ordered: false,
 }
@@ -304,7 +319,7 @@ var newTestcorpus5 = gocite.Work{
 	Passages: []gocite.Passage{
 		{PassageID: newFirstPassageChange.PassageID, Range: newFirstPassageChange.Range, Text: newFirstPassageChange.Text, Index: 0, Prev: newFirstPassageChange.Prev, Next: gocite.PassLoc{Exists: true, PassageID: newSecondPassage.PassageID, Index: 2}},
 		{PassageID: newThirdPassageChange.PassageID, Range: newThirdPassageChange.Range, Text: newThirdPassageChange.Text, Index: 2, Prev: gocite.PassLoc{Exists: true, PassageID: newSecondPassage.PassageID, Index: 2}, Next: gocite.PassLoc{}},
-		{PassageID: newSecondPassage.PassageID, Range: newSecondPassage.Range, Text: newSecondPassage.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: newThirdPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassage.PassageID, Index: 1}},
+		{PassageID: newSecondPassage.PassageID, Range: newSecondPassage.Range, Text: newSecondPassage.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: newFirstPassageChange.PassageID, Index: 0}, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassage.PassageID, Index: 1}},
 	},
 	First:   oldFirstPassageChange.First,
 	Last:    oldFirstPassageChange.Last,
@@ -344,7 +359,7 @@ var oldTestcorpus7 = oldTestWork{
 var newTestcorpus7 = gocite.Work{
 	WorkID: "urn:cts:collection:workgroup.work:",
 	Passages: []gocite.Passage{
-		{PassageID: newFirstPassageChange.PassageID, Range: false, Text: newFirstPassageChange.Text, Index: 0, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassage.PassageID, Index: 1}},
+		{PassageID: newFirstPassageChange.PassageID, Range: false, Text: newFirstPassageChange.Text, Index: 0, Next: gocite.PassLoc{Exists: true, PassageID: newThirdPassageChange.PassageID, Index: 1}},
 		{PassageID: newThirdPassageChange.PassageID, Range: false, Text: newThirdPassageChange.Text, Index: 1, Prev: gocite.PassLoc{Exists: true, PassageID: newFirstPassageChange.PassageID, Index: 0}},
 	},
 	First:   gocite.PassLoc{Exists: true, PassageID: newFirstPassageChange.PassageID, Index: 0},
@@ -558,7 +573,8 @@ func TestFindFirstIndex(t *testing.T) {
 }
 
 func TestSortPassages(t *testing.T) {
-	/*for j, workTestgroup := range oldURNtests4 { //two runs
+	/*Sorting passages with the old format should be possible. Does not work yet (runs into endless loop)
+	for j, workTestgroup := range oldURNtests4 { //two runs
 		var tempInputPassages []gocite.Passage
 		for k := range workTestgroup.inputCorpus.Passages { //three runs
 			var tempInputPassage = gocite.Passage{
@@ -649,8 +665,8 @@ func TestSortPassages(t *testing.T) {
 }
 
 func TestInsertPassage(t *testing.T) {
-	v, err := gocite.InsertPassage(newSecondPassage, URNtests5[0].inputCorpus)
-	if v.Ordered == true {
+	insertedWork, err := gocite.InsertPassage(newSecondPassage, URNtests5[0].inputCorpus)
+	if insertedWork.Ordered == true {
 		t.Error(
 			"Expected ordered", false,
 			"got", true,
@@ -661,13 +677,13 @@ func TestInsertPassage(t *testing.T) {
 			"Error calling InsertPassage: ", err,
 		)
 	}
-	for i := range v.Passages {
-		basePassage := oldTestPassage{PassageID: v.Passages[i].PassageID,
-			Range: v.Passages[i].Range,
-			Text:  v.Passages[i].Text,
-			Index: v.Passages[i].Index,
-			Prev:  v.Passages[i].Prev,
-			Next:  v.Passages[i].Next}
+	for i := range insertedWork.Passages {
+		basePassage := oldTestPassage{PassageID: insertedWork.Passages[i].PassageID,
+			Range: insertedWork.Passages[i].Range,
+			Text:  insertedWork.Passages[i].Text,
+			Index: insertedWork.Passages[i].Index,
+			Prev:  insertedWork.Passages[i].Prev,
+			Next:  insertedWork.Passages[i].Next}
 		comparePassage := oldTestPassage{PassageID: URNtests5[0].outputCorpus.Passages[i].PassageID,
 			Range: URNtests5[0].outputCorpus.Passages[i].Range,
 			Text:  URNtests5[0].outputCorpus.Passages[i].Text,
@@ -678,7 +694,7 @@ func TestInsertPassage(t *testing.T) {
 			t.Error(
 				"For test", i,
 				"expected", URNtests5[0].outputCorpus.Passages[i],
-				"got", v.Passages[i],
+				"got", insertedWork.Passages[i],
 			)
 		}
 	}
