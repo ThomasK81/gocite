@@ -47,12 +47,12 @@ type Work struct {
 
 // Passage is the smallest CTSNode
 type Passage struct {
-	PassageID  string
-	Range      bool
-	Text       EncText
-	Index      int
-	Prev, Next PassLoc
-	ImageLinks []Triple
+	PassageID     string
+	Range         bool
+	Analysis []Tokenisation
+	Index         int
+	Prev, Next    PassLoc
+	ImageLinks    []Triple
 }
 
 // PassLoc is a container for the ID and
@@ -68,9 +68,22 @@ type TextAndID struct {
 	ID, Text string
 }
 
-// EncText is a container for different encodings of the same textual information
-type EncText struct {
-	TXT, Brucheion, MarkDown, CEX, XML, Diplomatic, Normalised string
+// Tokenisation is a container for different tokenisations of the same textual information
+type Tokenisation struct {
+	ID            string
+	Description   string
+	DataStructure string
+	Array         []ArrayToken
+}
+
+// ArrayToken is a container for tokens represented in an array.
+type ArrayToken struct {
+	ID          string
+	Type        string
+	CharRepres  string
+	IntRepres   int
+	BoolRepres  bool
+	FloatRepres float64
 }
 
 // SplitCTS splits a CTS URN string in its stem and the passage reference
@@ -601,6 +614,17 @@ func after(originalString string, afterThisString string) (string, error) {
 	return originalString[adjustedPos:], nil
 }
 
+// FindTextTokens finds the analysis that contains txt tokens
+func FindTextTokens(p Passage) (index int, bool) {
+	for i, v := range p.Analysis {
+		if v.ID == "txt" {
+			index = i
+			return index, true
+		}
+	}
+	return index, false
+}
+
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
 func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 	text := []string{}
@@ -620,7 +644,8 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{{ID: ctsID, Text: p.Text.TXT}}, nil
+			passagtext := p.Analysis[]
+			return []TextAndID{{ID: ctsID, Text: }}, nil
 		case true:
 			idSl := strings.Split(ctsID, "@")
 			if len(idSl) != 2 {
