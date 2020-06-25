@@ -1,0 +1,13 @@
+{
+    "description": "goCite is an implementation of the CTS/CITE framework in GoLang.", 
+    "license": "MIT", 
+    "title": "goCite", 
+    "creators": [
+        {
+            "affiliation": "Open Greek And Latin Steering Committee", 
+            "orcid": "0000-0002-9425-5850", 
+            "name": "Thomas Koentges"
+        }
+    ], 
+    "access_right": "open"
+}
