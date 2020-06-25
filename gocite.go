@@ -693,11 +693,11 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 				return []TextAndID{}, errors.New("txt not found")
 			}
 			txt := strings.Join(p.Analysis[index].Array.CharRepres, "")
-			p.Text.TXT, err = ReturnSubStr(startRoot[1], txt)
+			txt, err = ReturnSubStr(startRoot[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = RReturnSubStr(endRoot[1], txt)
+			txt, err = RReturnSubStr(endRoot[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
 			}
@@ -740,7 +740,10 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 				default:
 					extrID = append(extrID, work.Passages[i].PassageID)
 				}
-				text = append(text, work.Passages[i].Text.TXT)
+				index, _ := FindTextTokens(work.Passages[i])
+
+				txt := strings.Join(work.Passages[i].Analysis[index].Array.CharRepres, "")
+				text = append(text, txt)
 			}
 		case false:
 			_, found := GetIndexByID(start, work)
@@ -778,7 +781,12 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 				if p.PassageID != end && p.Next.Exists != true {
 					return []TextAndID{}, errors.New("unexpected end of work")
 				}
-				text = append(text, p.Text.TXT)
+				index, found := FindTextTokens(p)
+				if !found {
+					return []TextAndID{}, errors.New("txt not found")
+				}
+				txt := strings.Join(p.Analysis[index].Array.CharRepres, "")
+				text = append(text, txt)
 			}
 		}
 		if startsub {
