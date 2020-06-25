@@ -47,12 +47,12 @@ type Work struct {
 
 // Passage is the smallest CTSNode
 type Passage struct {
-	PassageID     string
-	Range         bool
-	Analysis []Tokenisation
-	Index         int
-	Prev, Next    PassLoc
-	ImageLinks    []Triple
+	PassageID  string
+	Range      bool
+	Analysis   []Tokenisation
+	Index      int
+	Prev, Next PassLoc
+	ImageLinks []Triple
 }
 
 // PassLoc is a container for the ID and
@@ -73,17 +73,16 @@ type Tokenisation struct {
 	ID            string
 	Description   string
 	DataStructure string
-	Array         []ArrayToken
+	Array         ArrayToken
 }
 
 // ArrayToken is a container for tokens represented in an array.
 type ArrayToken struct {
-	ID          string
 	Type        string
-	CharRepres  string
-	IntRepres   int
-	BoolRepres  bool
-	FloatRepres float64
+	CharRepres  []string
+	IntRepres   []int
+	BoolRepres  []bool
+	FloatRepres []float64
 }
 
 // SplitCTS splits a CTS URN string in its stem and the passage reference
@@ -644,8 +643,12 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			passagtext := p.Analysis[]
-			return []TextAndID{{ID: ctsID, Text: }}, nil
+			index, found := FindTextTokens(p)
+			if !found {
+				return []TextAndID{}, errors.New("txt not found")
+			}
+			txt := strings.Join(p.Analysis[index].Array.CharRepres, "")
+			return []TextAndID{{ID: ctsID, Text: txt}}, nil
 		case true:
 			idSl := strings.Split(ctsID, "@")
 			if len(idSl) != 2 {
@@ -655,7 +658,11 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			txt := p.Text.TXT
+			index, found := FindTextTokens(p)
+			if !found {
+				return []TextAndID{}, errors.New("txt not found")
+			}
+			txt := strings.Join(p.Analysis[index].Array.CharRepres, "")
 			_, err = ReturnSubStr(idSl[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
@@ -681,15 +688,20 @@ func ExtractTextByID(ctsID string, work Work) ([]TextAndID, error) {
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = ReturnSubStr(startRoot[1], p.Text.TXT)
+			index, found := FindTextTokens(p)
+			if !found {
+				return []TextAndID{}, errors.New("txt not found")
+			}
+			txt := strings.Join(p.Analysis[index].Array.CharRepres, "")
+			p.Text.TXT, err = ReturnSubStr(startRoot[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			p.Text.TXT, err = RReturnSubStr(endRoot[1], p.Text.TXT)
+			p.Text.TXT, err = RReturnSubStr(endRoot[1], txt)
 			if err != nil {
 				return []TextAndID{}, err
 			}
-			return []TextAndID{{ID: ctsID, Text: p.Text.TXT}}, nil
+			return []TextAndID{{ID: ctsID, Text: txt}}, nil
 		}
 		if err != nil {
 			return []TextAndID{}, err
