@@ -615,14 +615,14 @@ func after(originalString string, afterThisString string) (string, error) {
 }
 
 // FindTextTokens finds the analysis that contains txt tokens
-func FindTextTokens(p Passage) (index int, bool) {
+func FindTextTokens(p Passage) (index int, found bool) {
 	for i, v := range p.Analysis {
 		if v.ID == "txt" {
-			index = i
-			return index, true
+			index, found = i, true
+			return index, found
 		}
 	}
-	return index, false
+	return index, found
 }
 
 // ExtractTextByID extracts the textual information from a Passage or multiple Passages in a Work
