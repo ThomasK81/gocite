@@ -1,3 +1,3 @@
-module github.com/thomask81/gocite
+module github.com/Thomask81/gocite
 
 go 1.14
