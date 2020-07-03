@@ -9,5 +9,13 @@
             "name": "Thomas Koentges"
         }
     ], 
+    "contributors": [
+        {
+            "affiliation": "Digital Humanities, University of Leipzig", 
+            "orcid": "0000-0003-4721-3284", 
+            "name": "Adrian Chitralla",
+            "type": "Research Assistant"
+        }
+    ], 
     "access_right": "open"
 }
