@@ -516,7 +516,7 @@ func TestIsExemplarID(t *testing.T) {
 	}
 }
 
-func TestDePlassage(t *testing.T) {
+func TestDelPlassage(t *testing.T) {
 	for _, workTestgroup := range URNtests3 {
 		sortedWork, _ := gocite.DelPassage(workTestgroup.inputID, workTestgroup.inputCorpus)
 		baseWork := oldTestWork{Ordered: sortedWork.Ordered}
